@@ -3,62 +3,151 @@ package ivatolm.monopoly.map;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Array;
 
 public class Map extends ApplicationAdapter {
 
-    Camera camera;
+    private Camera camera;
 
-    SpriteBatch batch;
+    private SpriteBatch batch;
+    private TextureAtlas middleCardsAtlas;
+    private TextureAtlas cornerCardsAtlas;
 
-    Texture middleCardTexture;
-    Texture cornerCardTexture;
+    private float mapHeight;
+    private float scalingRatio;
 
     public Map(Camera camera) {
         this.camera = camera;
 
         batch = new SpriteBatch();
-        createTextures();
+        loadTextures();
+        computeScalingFactor();
+    }
+
+    private void loadTextures() {
+        middleCardsAtlas = new TextureAtlas("cards.txt");
+        cornerCardsAtlas = new TextureAtlas("cards.txt");
+    }
+
+    private void computeScalingFactor() {
+        float middleWidth = middleCardsAtlas.createSprites().get(0).getWidth();
+        float cornerWidth = cornerCardsAtlas.createSprites().get(0).getHeight();
+
+        mapHeight = middleWidth * 9 + cornerWidth * 2;
+        resize(Gdx.app.getGraphics().getWidth(),
+                Gdx.app.getGraphics().getHeight());
     }
 
     @Override
     public void render() {
         batch.setProjectionMatrix(camera.combined);
-
         batch.begin();
-        batch.draw(cornerCardTexture, 0, 0);
-        batch.draw(middleCardTexture, 100, 0);
+
+        renderMiddleCards(scalingRatio);
+        renderCornerCards(scalingRatio);
+
         batch.end();
+    }
+
+    private void renderMiddleCards(float scale) {
+        Array<Sprite> sprites = middleCardsAtlas.createSprites();
+
+        Sprite template = sprites.get(0);
+        float templateWidth = template.getWidth() * scale;
+        float templateHeight = template.getHeight() * scale;
+        for (int row = 0; row < 4; row++) {
+            for (int i = 0; i < 9; i++) {
+                Sprite sprite = sprites.get(0);
+                sprite.setOrigin(0, templateHeight);
+                sprite.setRotation(90 * row);
+
+                float x = 0, y = 0;
+                switch (row) {
+                    case 0:
+                        x = templateHeight + (i * templateWidth);
+                        y = 0;
+                        break;
+                    case 1:
+                        x = templateHeight + (templateHeight + 9 * templateWidth);
+                        y = templateHeight + (i * templateWidth);
+                        break;
+                    case 2:
+                        x = templateHeight + (templateWidth + (i * templateWidth));
+                        y = templateHeight + (templateHeight + 9 * templateWidth);
+                        break;
+                    case 3:
+                        x = 0;
+                        y = templateHeight + (templateWidth + (i * templateWidth));
+                        break;
+                }
+
+                sprite.setPosition(x, y);
+
+                sprite.setOrigin(0, 0);
+                sprite.setScale(scale);
+
+                sprite.draw(batch);
+            }
+        }
+    }
+
+    private void renderCornerCards(float scale) {
+        Array<Sprite> sprites = cornerCardsAtlas.createSprites();
+
+        Sprite middleTemplate = middleCardsAtlas.createSprites().get(0);
+        float middleTemplateWidth = middleTemplate.getWidth() * scale;
+
+        Sprite template = sprites.get(0);
+        float templateWidth = template.getHeight() * scale;
+        float templateHeight = template.getHeight() * scale;
+
+        for (int i = 0; i < 4; i++) {
+            Sprite sprite = sprites.get(0);
+            sprite.setOrigin(0, 0);
+            sprite.setRotation(0);
+
+            float x = 0, y = 0;
+            switch (i) {
+                case 0:
+                    x = 0;
+                    y = 0;
+                    break;
+                case 1:
+                    x = templateWidth + middleTemplateWidth * 9;
+                    y = 0;
+                    break;
+                case 2:
+                    x = templateWidth + middleTemplateWidth * 9;
+                    y = templateHeight + middleTemplateWidth * 9;
+                    break;
+                case 3:
+                    x = 0;
+                    y = templateHeight + middleTemplateWidth * 9;
+                    break;
+            }
+
+            sprite.setPosition(x, y);
+
+            sprite.setOrigin(0, 0);
+            sprite.setScale(scale);
+
+            sprite.draw(batch);
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        scalingRatio = height / mapHeight;
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        middleCardTexture.dispose();
-        cornerCardTexture.dispose();
-    }
-
-    private void createTextures() {
-        Pixmap rawPM = new Pixmap(Gdx.files.internal("card.jpg"));
-
-        Pixmap middlePM = new Pixmap(75, 100, rawPM.getFormat());
-        middlePM.drawPixmap(rawPM,
-                0, 0, rawPM.getWidth(), rawPM.getHeight(),
-                0, 0, middlePM.getWidth(), middlePM.getHeight());
-
-        Pixmap cornerPM = new Pixmap(100, 100, rawPM.getFormat());
-        cornerPM.drawPixmap(rawPM,
-                0, 0, rawPM.getWidth(), rawPM.getHeight(),
-                0, 0, cornerPM.getWidth(), cornerPM.getHeight());
-
-        middleCardTexture = new Texture(middlePM);
-        cornerCardTexture = new Texture(cornerPM);
-
-        rawPM.dispose();
-        middlePM.dispose();
-        cornerPM.dispose();
+        middleCardsAtlas.dispose();
+        cornerCardsAtlas.dispose();
     }
 
 }

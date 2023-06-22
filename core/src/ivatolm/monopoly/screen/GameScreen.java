@@ -16,7 +16,10 @@ public class GameScreen extends ScreenAdapter {
 
     public GameScreen() {
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(1280, 720, camera);
+        viewport = new ExtendViewport(
+                Gdx.app.getGraphics().getWidth(),
+                Gdx.app.getGraphics().getHeight(),
+                camera);
         map = new Map(camera);
     }
 
@@ -29,6 +32,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void resize(int width, int height) {
+        System.out.println("Width: " + width + ", height: " + height);
         viewport.update(width, height, true);
     }
 
