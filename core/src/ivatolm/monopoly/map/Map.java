@@ -46,18 +46,18 @@ public class Map extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        renderMiddleCards(scalingRatio);
-        renderCornerCards(scalingRatio);
+        renderMiddleCards();
+        renderCornerCards();
 
         batch.end();
     }
 
-    private void renderMiddleCards(float scale) {
+    private void renderMiddleCards() {
         Array<Sprite> sprites = middleCardsAtlas.createSprites();
 
         Sprite template = sprites.get(0);
-        float templateWidth = template.getWidth() * scale;
-        float templateHeight = template.getHeight() * scale;
+        float templateWidth = template.getWidth() * scalingRatio;
+        float templateHeight = template.getHeight() * scalingRatio;
         for (int row = 0; row < 4; row++) {
             for (int i = 0; i < 9; i++) {
                 Sprite sprite = sprites.get(0);
@@ -87,22 +87,22 @@ public class Map extends ApplicationAdapter {
                 sprite.setPosition(x, y);
 
                 sprite.setOrigin(0, 0);
-                sprite.setScale(scale);
+                sprite.setScale(scalingRatio);
 
                 sprite.draw(batch);
             }
         }
     }
 
-    private void renderCornerCards(float scale) {
+    private void renderCornerCards() {
         Array<Sprite> sprites = cornerCardsAtlas.createSprites();
 
         Sprite middleTemplate = middleCardsAtlas.createSprites().get(0);
-        float middleTemplateWidth = middleTemplate.getWidth() * scale;
+        float middleTemplateWidth = middleTemplate.getWidth() * scalingRatio;
 
         Sprite template = sprites.get(0);
-        float templateWidth = template.getHeight() * scale;
-        float templateHeight = template.getHeight() * scale;
+        float templateWidth = template.getHeight() * scalingRatio;
+        float templateHeight = template.getHeight() * scalingRatio;
 
         for (int i = 0; i < 4; i++) {
             Sprite sprite = sprites.get(0);
@@ -132,7 +132,7 @@ public class Map extends ApplicationAdapter {
             sprite.setPosition(x, y);
 
             sprite.setOrigin(0, 0);
-            sprite.setScale(scale);
+            sprite.setScale(scalingRatio);
 
             sprite.draw(batch);
         }
