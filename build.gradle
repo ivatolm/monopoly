@@ -1,5 +1,4 @@
 buildscript {
-    
 
     repositories {
         mavenLocal()
@@ -8,10 +7,8 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         google()
     }
+
     dependencies {
-        classpath 'org.wisepersist:gwt-gradle-plugin:1.1.16'
-        classpath 'org.gretty:gretty:3.0.7'
-        
 
     }
 }
@@ -44,37 +41,20 @@ allprojects {
 project(":desktop") {
     apply plugin: "java-library"
 
-
     dependencies {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        
-    }
-}
-
-project(":html") {
-    apply plugin: "java-library"
-    apply plugin: "gwt"
-    apply plugin: "war"
-    apply plugin: "org.gretty"
-
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-        
+        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
 }
 
 project(":core") {
     apply plugin: "java-library"
 
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+
     }
 }

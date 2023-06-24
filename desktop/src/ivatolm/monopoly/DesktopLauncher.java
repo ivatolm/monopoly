@@ -2,7 +2,7 @@ package ivatolm.monopoly;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import ivatolm.monopoly.Game;
+import ivatolm.monopoly.Monopoly;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
@@ -10,6 +10,6 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("Monopoly");
-		new Lwjgl3Application(new Game(), config);
+		new Lwjgl3Application(new Monopoly(), config);
 	}
 }
