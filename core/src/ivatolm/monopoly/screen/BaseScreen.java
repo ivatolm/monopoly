@@ -49,6 +49,9 @@ public abstract class BaseScreen extends ScreenAdapter
         if (events.size() > 0) {
             handleEvents();
         }
+
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override

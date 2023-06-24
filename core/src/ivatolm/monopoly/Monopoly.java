@@ -3,17 +3,22 @@ package ivatolm.monopoly;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.resource.ResourceManager;
+import ivatolm.monopoly.screen.BaseScreen;
+import ivatolm.monopoly.screen.JoinLobbyScreen;
 import ivatolm.monopoly.screen.MainMenuScreen;
 
 public class Monopoly extends Game implements EventReceiver {
 
 	private LinkedList<MonopolyEvent> events;
+
 	private MainMenuScreen mainMenuScreen;
+	private JoinLobbyScreen joinLobbyScreen;
 
 	@Override
 	public void create() {
@@ -23,6 +28,9 @@ public class Monopoly extends Game implements EventReceiver {
 
 		mainMenuScreen = new MainMenuScreen();
 		EventDistributor.register(Type.MainMenuScreen, mainMenuScreen);
+
+		joinLobbyScreen = new JoinLobbyScreen();
+		EventDistributor.register(Type.JoinLobbyScreen, joinLobbyScreen);
 
 		setScreen(mainMenuScreen);
 	}
@@ -34,14 +42,12 @@ public class Monopoly extends Game implements EventReceiver {
 
 	@Override
 	public void handleEvents() {
-		if (events.isEmpty()) {
-			return;
-		}
-
 		MonopolyEvent event = events.pop();
-		switch (event) {
+		switch (event.getType()) {
 			case JoinLobby:
-				
+				setScreen(joinLobbyScreen);
+				break;
+			default:
 				break;
 		}
 	}
@@ -50,13 +56,22 @@ public class Monopoly extends Game implements EventReceiver {
 	public void render() {
 		super.render();
 
-		handleEvents();
+		if (events.size() > 0) {
+			handleEvents();
+		}
 	}
 
 	@Override
 	public void dispose() {
 		mainMenuScreen.dispose();
 		ResourceManager.dispose();
+	}
+
+	@Override
+	public void setScreen(Screen screen) {
+		super.setScreen(screen);
+
+		((BaseScreen) screen).setAsInputHandler();
 	}
 
 }

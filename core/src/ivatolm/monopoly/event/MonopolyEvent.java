@@ -1,7 +1,20 @@
 package ivatolm.monopoly.event;
 
-public enum MonopolyEvent {
+public abstract class MonopolyEvent {
 
-    JoinLobby
+    public enum Type {
+        JoinLobby,
+        ConnectLobby
+    }
+
+    private Type type;
+
+    public MonopolyEvent(Type type) {
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
+    }
 
 }

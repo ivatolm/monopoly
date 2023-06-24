@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -25,8 +26,9 @@ public class ResourceManager {
             parameter.size = size;
 
             font = generator.generateFont(parameter);
+            font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-            fonts.put(name, font);
+            fonts.put(name + size, font);
             generator.dispose();
         }
 
