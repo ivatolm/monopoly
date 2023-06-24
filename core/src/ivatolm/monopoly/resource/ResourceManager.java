@@ -1,4 +1,4 @@
-package ivatolm.monopoly.resources;
+package ivatolm.monopoly.resource;
 
 import java.util.HashMap;
 import java.util.LinkedList;

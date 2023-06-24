@@ -1,4 +1,4 @@
-package ivatolm.monopoly.widgets;
+package ivatolm.monopoly.widget;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
-import ivatolm.monopoly.resources.ResourceManager;
+import ivatolm.monopoly.resource.ResourceManager;
 
 public class FlatButtonFactory {
 
