@@ -4,10 +4,7 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpMethods;
-import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
 
@@ -58,7 +55,6 @@ public class Client extends ApplicationAdapter implements EventReceiver {
         }
 
         socket = Gdx.net.newClientSocket(Protocol.TCP, e.getIp(), 26481, new SocketHints());
-
     }
 
 }
