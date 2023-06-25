@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import ivatolm.monopoly.event.EventDistributor;
-import ivatolm.monopoly.event.JoinLobbyEvent;
+import ivatolm.monopoly.event.events.JoinLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class MainMenuScreen extends BaseScreen {

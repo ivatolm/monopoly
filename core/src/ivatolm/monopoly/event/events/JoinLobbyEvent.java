@@ -1,4 +1,6 @@
-package ivatolm.monopoly.event;
+package ivatolm.monopoly.event.events;
+
+import ivatolm.monopoly.event.MonopolyEvent;
 
 public class JoinLobbyEvent extends MonopolyEvent {
 

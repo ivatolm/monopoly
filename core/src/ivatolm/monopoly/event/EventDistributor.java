@@ -10,7 +10,7 @@ public class EventDistributor {
         handlers.put(type, handler);
     }
 
-    public static void send(EventReceiver.Type type, MonopolyEvent event) {
+    public static synchronized void send(EventReceiver.Type type, MonopolyEvent event) {
         EventReceiver receiver = handlers.get(type);
         receiver.receive(event);
     }

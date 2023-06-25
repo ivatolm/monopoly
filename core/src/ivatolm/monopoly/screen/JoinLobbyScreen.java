@@ -9,9 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import ivatolm.monopoly.event.ConnectLobbyEvent;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.ConnectLobbyEvent;
+import ivatolm.monopoly.event.events.JoinedLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class JoinLobbyScreen extends BaseScreen {
@@ -27,6 +28,7 @@ public class JoinLobbyScreen extends BaseScreen {
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                errorMessageLabel.setText("");
                 EventDistributor.send(Type.Client, new ConnectLobbyEvent(ipTextField.getText()));
             }
         });
@@ -48,7 +50,11 @@ public class JoinLobbyScreen extends BaseScreen {
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
             case ConnectLobby:
-                handleConnectFailed(event);
+                if (event.getResult()) {
+                    handleConnectSuccess(event);
+                } else {
+                    handleConnectFail(event);
+                }
                 break;
             default:
                 break;
@@ -67,7 +73,11 @@ public class JoinLobbyScreen extends BaseScreen {
         super.dispose();
     }
 
-    private void handleConnectFailed(MonopolyEvent event) {
+    private void handleConnectSuccess(MonopolyEvent event) {
+        EventDistributor.send(Type.Game, new JoinedLobbyEvent());
+    }
+
+    private void handleConnectFail(MonopolyEvent event) {
         String errorMsg = event.getErrorMsg();
 
         errorMessageLabel.setText(errorMsg);
