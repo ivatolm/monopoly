@@ -3,12 +3,19 @@ package ivatolm.monopoly.event;
 public abstract class MonopolyEvent {
 
     public enum Type {
-        JoinLobby,
+        // navigation
+        GoJoinLobbyScreenEvent,
+        GoLobbyScreenEvent,
+        GoCreateLobbyScreenEvent,
+
+        // request
         ConnectLobby,
+        CreateLobby,
+
+        // response
         JoinedLobby,
-        StartLobby,
         ClientConnected,
-        ServerAccepted
+        ServerAccepted,
     }
 
     private Type type;

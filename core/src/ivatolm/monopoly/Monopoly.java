@@ -8,9 +8,11 @@ import com.badlogic.gdx.Screen;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.net.Client;
+import ivatolm.monopoly.net.Server;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.resource.ResourceManager;
 import ivatolm.monopoly.screen.BaseScreen;
+import ivatolm.monopoly.screen.CreateLobbyScreen;
 import ivatolm.monopoly.screen.JoinLobbyScreen;
 import ivatolm.monopoly.screen.LobbyScreen;
 import ivatolm.monopoly.screen.MainMenuScreen;
@@ -21,8 +23,10 @@ public class Monopoly extends Game implements EventReceiver {
 
 	private MainMenuScreen mainMenuScreen;
 	private JoinLobbyScreen joinLobbyScreen;
+	private CreateLobbyScreen createLobbyScreen;
 	private LobbyScreen lobbyScreen;
 	private Client client;
+	private Server server;
 
 	@Override
 	public void create() {
@@ -36,11 +40,17 @@ public class Monopoly extends Game implements EventReceiver {
 		joinLobbyScreen = new JoinLobbyScreen();
 		EventDistributor.register(Type.JoinLobbyScreen, joinLobbyScreen);
 
+		createLobbyScreen = new CreateLobbyScreen();
+		EventDistributor.register(Type.CreateLobbyScreen, createLobbyScreen);
+
 		lobbyScreen = new LobbyScreen();
 		EventDistributor.register(Type.LobbyScreen, lobbyScreen);
 
 		client = new Client();
 		EventDistributor.register(Type.Client, client);
+
+		server = new Server();
+		EventDistributor.register(Type.Server, server);
 
 		setScreen(mainMenuScreen);
 	}
@@ -54,11 +64,14 @@ public class Monopoly extends Game implements EventReceiver {
 	public void handleEvents() {
 		MonopolyEvent event = events.pop();
 		switch (event.getType()) {
-			case JoinLobby:
+			case GoJoinLobbyScreenEvent:
 				setScreen(joinLobbyScreen);
 				break;
-			case JoinedLobby:
+			case GoLobbyScreenEvent:
 				setScreen(lobbyScreen);
+				break;
+			case GoCreateLobbyScreenEvent:
+				setScreen(createLobbyScreen);
 				break;
 			default:
 				break;
@@ -74,14 +87,17 @@ public class Monopoly extends Game implements EventReceiver {
 		}
 
 		client.handleEvents();
+		server.handleEvents();
 	}
 
 	@Override
 	public void dispose() {
 		mainMenuScreen.dispose();
 		joinLobbyScreen.dispose();
+		createLobbyScreen.dispose();
 		lobbyScreen.dispose();
 		client.dispose();
+		server.dispose();
 		ResourceManager.dispose();
 	}
 

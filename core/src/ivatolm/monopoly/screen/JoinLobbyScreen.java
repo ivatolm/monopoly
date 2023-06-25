@@ -11,8 +11,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.ConnectLobbyEvent;
-import ivatolm.monopoly.event.events.JoinedLobbyEvent;
+import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
+import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class JoinLobbyScreen extends BaseScreen {

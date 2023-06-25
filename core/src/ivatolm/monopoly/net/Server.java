@@ -8,12 +8,13 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Type;
-import ivatolm.monopoly.event.events.ClientConnectedEvent;
+import ivatolm.monopoly.event.events.response.ClientConnectedEvent;
 
 public class Server implements EventReceiver {
 
@@ -35,16 +36,18 @@ public class Server implements EventReceiver {
 
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
-            case StartLobby:
-                handleStartLobby(event);
+            case CreateLobby:
+                handleCreateLobby(event);
+                break;
             case ClientConnected:
                 handleClientConnected(event);
+                break;
             default:
                 break;
         }
     }
 
-    private void handleStartLobby(MonopolyEvent event) {
+    private void handleCreateLobby(MonopolyEvent event) {
         if (socket != null) {
             socket.dispose();
         }
@@ -53,9 +56,11 @@ public class Server implements EventReceiver {
             socketHandler.dispose();
         }
 
-        socket = Gdx.net.newServerSocket(Protocol.TCP, 26481, new ServerSocketHints());
+        socket = Gdx.net.newServerSocket(Protocol.TCP, "127.0.0.1", 26481, new ServerSocketHints());
         socketHandler = new ServerSocketHandler(socket);
         socketHandler.start();
+
+        System.out.println("lobby created");
     }
 
     private void handleClientConnected(MonopolyEvent event) {
@@ -102,8 +107,12 @@ class ServerSocketHandler {
 
     void accept() {
         while (run) {
-            Socket clientSocket = socket.accept(new SocketHints());
-            EventDistributor.send(Type.Server, new ClientConnectedEvent(clientSocket));
+            try {
+                Socket clientSocket = socket.accept(new SocketHints());
+                EventDistributor.send(Type.Server, new ClientConnectedEvent(clientSocket));
+            } catch (GdxRuntimeException e) {
+                // timeout expired
+            }
         }
     }
 

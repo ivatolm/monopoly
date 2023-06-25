@@ -1,4 +1,4 @@
-package ivatolm.monopoly.event.events;
+package ivatolm.monopoly.event.events.request;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 

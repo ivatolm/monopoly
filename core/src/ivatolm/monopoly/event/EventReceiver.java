@@ -8,7 +8,7 @@ public interface EventReceiver {
         JoinLobbyScreen,
         LobbyScreen,
         Client,
-        Server
+        Server, CreateLobbyScreen
     }
 
     public void receive(MonopolyEvent event);

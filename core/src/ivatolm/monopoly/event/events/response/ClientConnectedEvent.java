@@ -1,15 +1,15 @@
-package ivatolm.monopoly.event.events;
+package ivatolm.monopoly.event.events.response;
 
 import com.badlogic.gdx.net.Socket;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 
-public class ServerAcceptedEvent extends MonopolyEvent {
+public class ClientConnectedEvent extends MonopolyEvent {
 
     private Socket socket;
 
-    public ServerAcceptedEvent(Socket socket) {
-        super(Type.ServerAccepted);
+    public ClientConnectedEvent(Socket socket) {
+        super(Type.ClientConnected);
 
         this.socket = socket;
     }

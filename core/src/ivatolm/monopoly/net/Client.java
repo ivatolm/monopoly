@@ -12,8 +12,8 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Type;
-import ivatolm.monopoly.event.events.ConnectLobbyEvent;
-import ivatolm.monopoly.event.events.ServerAcceptedEvent;
+import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
+import ivatolm.monopoly.event.events.response.ServerAcceptedEvent;
 
 public class Client implements EventReceiver {
 
