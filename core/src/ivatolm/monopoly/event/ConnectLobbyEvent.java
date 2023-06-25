@@ -6,6 +6,8 @@ public class ConnectLobbyEvent extends MonopolyEvent {
 
     public ConnectLobbyEvent(String ip) {
         super(Type.ConnectLobby);
+
+        this.ip = ip;
     }
 
     public String getIp() {

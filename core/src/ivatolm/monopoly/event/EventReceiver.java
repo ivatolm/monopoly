@@ -5,7 +5,8 @@ public interface EventReceiver {
     public static enum Type {
         Game,
         MainMenuScreen,
-        JoinLobbyScreen
+        JoinLobbyScreen,
+        Client
     }
 
     public void receive(MonopolyEvent event);

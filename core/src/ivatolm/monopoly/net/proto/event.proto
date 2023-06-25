@@ -4,7 +4,7 @@ package net;
 
 option java_multiple_files = true;
 
-message MyEvent {
+message MonopolyEvent {
 
     enum EventType {
         Connect = 0;

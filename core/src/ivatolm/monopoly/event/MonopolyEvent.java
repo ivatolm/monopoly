@@ -8,6 +8,7 @@ public abstract class MonopolyEvent {
     }
 
     private Type type;
+    private String errorMsg;
 
     public MonopolyEvent(Type type) {
         this.type = type;
@@ -15,6 +16,14 @@ public abstract class MonopolyEvent {
 
     public Type getType() {
         return type;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    public String getErrorMsg() {
+        return this.errorMsg;
     }
 
 }

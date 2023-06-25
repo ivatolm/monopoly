@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.net.Client;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.resource.ResourceManager;
 import ivatolm.monopoly.screen.BaseScreen;
@@ -19,6 +20,7 @@ public class Monopoly extends Game implements EventReceiver {
 
 	private MainMenuScreen mainMenuScreen;
 	private JoinLobbyScreen joinLobbyScreen;
+	private Client client;
 
 	@Override
 	public void create() {
@@ -31,6 +33,9 @@ public class Monopoly extends Game implements EventReceiver {
 
 		joinLobbyScreen = new JoinLobbyScreen();
 		EventDistributor.register(Type.JoinLobbyScreen, joinLobbyScreen);
+
+		client = new Client();
+		EventDistributor.register(Type.Client, client);
 
 		setScreen(mainMenuScreen);
 	}
@@ -59,6 +64,8 @@ public class Monopoly extends Game implements EventReceiver {
 		if (events.size() > 0) {
 			handleEvents();
 		}
+		
+		client.handleEvents();
 	}
 
 	@Override

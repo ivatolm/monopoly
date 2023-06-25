@@ -15,7 +15,7 @@ import ivatolm.monopoly.event.MonopolyEvent;
 public abstract class BaseScreen extends ScreenAdapter
         implements EventReceiver {
 
-    private LinkedList<MonopolyEvent> events;
+    protected LinkedList<MonopolyEvent> events;
     protected Stage stage;
     protected Table root;
 

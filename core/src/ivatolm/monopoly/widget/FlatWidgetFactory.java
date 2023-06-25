@@ -57,6 +57,7 @@ public class FlatWidgetFactory {
     public static Label FlatLabel(String text) {
         LabelStyle style = new LabelStyle();
         style.fontColor = Color.WHITE;
+        style.font = ResourceManager.getFont("OpenSans-Regular", 14);
 
         Label label = new Label(text, style);
 
