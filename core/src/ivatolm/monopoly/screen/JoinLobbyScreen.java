@@ -30,7 +30,8 @@ public class JoinLobbyScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 errorMessageLabel.setText("");
-                EventDistributor.send(Type.JoinLobbyScreen, Type.Client, new ConnectLobbyEvent(ipTextField.getText()));
+                EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Client,
+                        new ConnectLobbyEvent(ipTextField.getText()));
             }
         });
 
@@ -79,7 +80,7 @@ public class JoinLobbyScreen extends BaseScreen {
         @SuppressWarnings("unused")
         JoinedLobbyEvent e = (JoinedLobbyEvent) event;
 
-        EventDistributor.send(Type.JoinLobbyScreen, Type.Game, new GoLobbyScreenEvent());
+        EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
     }
 
     private void handleJoinedFail(MonopolyEvent event) {

@@ -27,7 +27,7 @@ public class CreateLobbyScreen extends BaseScreen {
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Type.CreateLobbyScreen, Type.Server, new CreateLobbyEvent());
+                EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Server, new CreateLobbyEvent());
             }
         });
 
@@ -67,14 +67,14 @@ public class CreateLobbyScreen extends BaseScreen {
     private void handleCreatedLobby(MonopolyEvent event) {
         CreatedLobbyEvent e = (CreatedLobbyEvent) event;
 
-        EventDistributor.send(Type.CreateLobbyScreen, Type.Client, new ConnectLobbyEvent(e.getIp()));
+        EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Client, new ConnectLobbyEvent(e.getIp()));
     }
 
     private void handleJoinedLobby(MonopolyEvent event) {
         @SuppressWarnings("unused")
         JoinedLobbyEvent e = (JoinedLobbyEvent) event;
 
-        EventDistributor.send(Type.CreateLobbyScreen, Type.Game, new GoLobbyScreenEvent());
+        EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
     }
 
     @Override

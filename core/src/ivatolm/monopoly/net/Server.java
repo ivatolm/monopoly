@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.EventReceiver.Type;
+import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.response.ClientConnectedEvent;
 import ivatolm.monopoly.event.events.response.CreatedLobbyEvent;
 
@@ -61,7 +61,7 @@ public class Server implements EventReceiver {
         socketHandler = new ServerSocketHandler(socket);
         socketHandler.start();
 
-        EventDistributor.send(Type.Server, Type.CreateLobbyScreen, new CreatedLobbyEvent("127.0.0.1"));
+        EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen, new CreatedLobbyEvent("127.0.0.1"));
     }
 
     private void handleClientConnected(MonopolyEvent event) {
@@ -109,7 +109,7 @@ class ServerSocketHandler {
         while (run) {
             try {
                 Socket clientSocket = socket.accept(new SocketHints());
-                EventDistributor.send(Type.Server, Type.Server, new ClientConnectedEvent(clientSocket));
+                EventDistributor.send(Endpoint.Server, Endpoint.Server, new ClientConnectedEvent(clientSocket));
             } catch (GdxRuntimeException e) {
                 // timeout expired
             }

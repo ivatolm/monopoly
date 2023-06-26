@@ -32,25 +32,25 @@ public class Monopoly extends Game implements EventReceiver {
 	public void create() {
 		events = new LinkedList<>();
 
-		EventDistributor.register(Type.Game, this);
+		EventDistributor.register(Endpoint.Game, this);
 
 		mainMenuScreen = new MainMenuScreen();
-		EventDistributor.register(Type.MainMenuScreen, mainMenuScreen);
+		EventDistributor.register(Endpoint.MainMenuScreen, mainMenuScreen);
 
 		joinLobbyScreen = new JoinLobbyScreen();
-		EventDistributor.register(Type.JoinLobbyScreen, joinLobbyScreen);
+		EventDistributor.register(Endpoint.JoinLobbyScreen, joinLobbyScreen);
 
 		createLobbyScreen = new CreateLobbyScreen();
-		EventDistributor.register(Type.CreateLobbyScreen, createLobbyScreen);
+		EventDistributor.register(Endpoint.CreateLobbyScreen, createLobbyScreen);
 
 		lobbyScreen = new LobbyScreen();
-		EventDistributor.register(Type.LobbyScreen, lobbyScreen);
+		EventDistributor.register(Endpoint.LobbyScreen, lobbyScreen);
 
 		client = new Client();
-		EventDistributor.register(Type.Client, client);
+		EventDistributor.register(Endpoint.Client, client);
 
 		server = new Server();
-		EventDistributor.register(Type.Server, server);
+		EventDistributor.register(Endpoint.Server, server);
 
 		setScreen(mainMenuScreen);
 	}

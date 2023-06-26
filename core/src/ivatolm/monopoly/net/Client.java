@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.EventReceiver.Type;
+import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
 import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
 import ivatolm.monopoly.event.events.response.ServerAcceptedEvent;
@@ -23,7 +23,7 @@ public class Client implements EventReceiver {
     private Socket socket;
     private ClientSocketHandler socketHandler;
 
-    private EventReceiver.Type sender;
+    private EventReceiver.Endpoint sender;
 
     @Override
     public void receive(MonopolyEvent event) {
@@ -72,7 +72,7 @@ public class Client implements EventReceiver {
         joinedLobbyEvent.setResult(e.getResult());
         joinedLobbyEvent.setErrorMsg(e.getErrorMsg());
 
-        EventDistributor.send(Type.Client, sender, joinedLobbyEvent);
+        EventDistributor.send(Endpoint.Client, sender, joinedLobbyEvent);
         sender = null;
     }
 
@@ -121,7 +121,7 @@ class ClientSocketHandler {
             event.setErrorMsg("Couldn't connect to the host");
         }
 
-        EventDistributor.send(Type.Client, Type.Client, event);
+        EventDistributor.send(Endpoint.Client, Endpoint.Client, event);
     }
 
     void dispose() {

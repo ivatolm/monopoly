@@ -2,7 +2,7 @@ package ivatolm.monopoly.event;
 
 public interface EventReceiver {
 
-    public static enum Type {
+    public static enum Endpoint {
         Game,
         MainMenuScreen,
         JoinLobbyScreen,

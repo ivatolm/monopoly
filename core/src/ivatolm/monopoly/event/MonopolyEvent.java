@@ -20,7 +20,7 @@ public abstract class MonopolyEvent {
     }
 
     private Type type;
-    private EventReceiver.Type sender;
+    private EventReceiver.Endpoint sender;
     private boolean result;
     private String errorMsg;
 
@@ -28,7 +28,7 @@ public abstract class MonopolyEvent {
         this.type = type;
     }
 
-    public void setSender(EventReceiver.Type sender) {
+    public void setSender(EventReceiver.Endpoint sender) {
         this.sender = sender;
     }
 
@@ -36,7 +36,7 @@ public abstract class MonopolyEvent {
         return type;
     }
 
-    public EventReceiver.Type getSender() {
+    public EventReceiver.Endpoint getSender() {
         return sender;
     }
 
