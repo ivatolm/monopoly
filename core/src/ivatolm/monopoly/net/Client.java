@@ -12,9 +12,9 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
-import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
-import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
-import ivatolm.monopoly.event.events.response.ServerAcceptedEvent;
+import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
+import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
+import ivatolm.monopoly.event.events.response.RespClientAcceptedEvent;
 
 public class Client implements EventReceiver {
 
@@ -38,10 +38,10 @@ public class Client implements EventReceiver {
 
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
-            case ConnectLobby:
+            case ReqConnectToLobby:
                 handleConnectLobby(event);
                 break;
-            case ServerAccepted:
+            case RespClientAccepted:
                 handleServerAccepted(event);
                 break;
             default:
@@ -50,7 +50,7 @@ public class Client implements EventReceiver {
     }
 
     private void handleConnectLobby(MonopolyEvent event) {
-        ConnectLobbyEvent e = (ConnectLobbyEvent) event;
+        ReqConnectToLobbyEvent e = (ReqConnectToLobbyEvent) event;
         sender = e.getSender();
 
         if (socketHandler != null) {
@@ -62,13 +62,13 @@ public class Client implements EventReceiver {
     }
 
     private void handleServerAccepted(MonopolyEvent event) {
-        ServerAcceptedEvent e = (ServerAcceptedEvent) event;
+        RespClientAcceptedEvent e = (RespClientAcceptedEvent) event;
 
         if (e.getResult()) {
             socket = e.getSocket();
         }
 
-        JoinedLobbyEvent joinedLobbyEvent = new JoinedLobbyEvent();
+        RespJoinedLobbyEvent joinedLobbyEvent = new RespJoinedLobbyEvent();
         joinedLobbyEvent.setResult(e.getResult());
         joinedLobbyEvent.setErrorMsg(e.getErrorMsg());
 
@@ -109,14 +109,14 @@ class ClientSocketHandler {
     }
 
     void connect() {
-        ServerAcceptedEvent event;
+        RespClientAcceptedEvent event;
 
         try {
             Socket socket = Gdx.net.newClientSocket(Protocol.TCP, ip, 26481, new SocketHints());
-            event = new ServerAcceptedEvent(socket);
+            event = new RespClientAcceptedEvent(socket);
             event.setResult(true);
         } catch (GdxRuntimeException e) {
-            event = new ServerAcceptedEvent(null);
+            event = new RespClientAcceptedEvent(null);
             event.setResult(false);
             event.setErrorMsg("Couldn't connect to the host");
         }

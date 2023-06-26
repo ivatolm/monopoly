@@ -14,8 +14,8 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
-import ivatolm.monopoly.event.events.response.ClientConnectedEvent;
-import ivatolm.monopoly.event.events.response.CreatedLobbyEvent;
+import ivatolm.monopoly.event.events.response.RespClientConnectedEvent;
+import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
 
 public class Server implements EventReceiver {
 
@@ -37,10 +37,10 @@ public class Server implements EventReceiver {
 
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
-            case CreateLobby:
+            case ReqCreateLobby:
                 handleCreateLobby(event);
                 break;
-            case ClientConnected:
+            case RespClientConnected:
                 handleClientConnected(event);
                 break;
             default:
@@ -61,11 +61,11 @@ public class Server implements EventReceiver {
         socketHandler = new ServerSocketHandler(socket);
         socketHandler.start();
 
-        EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen, new CreatedLobbyEvent("127.0.0.1"));
+        EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen, new RespLobbyCreatedEvent("127.0.0.1"));
     }
 
     private void handleClientConnected(MonopolyEvent event) {
-        ClientConnectedEvent e = (ClientConnectedEvent) event;
+        RespClientConnectedEvent e = (RespClientConnectedEvent) event;
 
         Socket client = e.getSocket();
     }
@@ -109,7 +109,7 @@ class ServerSocketHandler {
         while (run) {
             try {
                 Socket clientSocket = socket.accept(new SocketHints());
-                EventDistributor.send(Endpoint.Server, Endpoint.Server, new ClientConnectedEvent(clientSocket));
+                EventDistributor.send(Endpoint.Server, Endpoint.Server, new RespClientConnectedEvent(clientSocket));
             } catch (GdxRuntimeException e) {
                 // timeout expired
             }

@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
-import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
-import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
+import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
+import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class JoinLobbyScreen extends BaseScreen {
@@ -31,7 +31,7 @@ public class JoinLobbyScreen extends BaseScreen {
             public void clicked(InputEvent event, float x, float y) {
                 errorMessageLabel.setText("");
                 EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Client,
-                        new ConnectLobbyEvent(ipTextField.getText()));
+                        new ReqConnectToLobbyEvent(ipTextField.getText()));
             }
         });
 
@@ -52,7 +52,7 @@ public class JoinLobbyScreen extends BaseScreen {
         MonopolyEvent event = events.pop();
         System.out.println(event);
         switch (event.getType()) {
-            case JoinedLobby:
+            case RespJoinedLobby:
                 if (event.getResult()) {
                     handleJoinedSuccess(event);
                 } else {
@@ -78,7 +78,7 @@ public class JoinLobbyScreen extends BaseScreen {
 
     private void handleJoinedSuccess(MonopolyEvent event) {
         @SuppressWarnings("unused")
-        JoinedLobbyEvent e = (JoinedLobbyEvent) event;
+        RespJoinedLobbyEvent e = (RespJoinedLobbyEvent) event;
 
         EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
     }

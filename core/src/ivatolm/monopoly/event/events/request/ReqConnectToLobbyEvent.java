@@ -2,12 +2,12 @@ package ivatolm.monopoly.event.events.request;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 
-public class ConnectLobbyEvent extends MonopolyEvent {
+public class ReqConnectToLobbyEvent extends MonopolyEvent {
 
     private String ip;
 
-    public ConnectLobbyEvent(String ip) {
-        super(Type.ConnectLobby);
+    public ReqConnectToLobbyEvent(String ip) {
+        super(Type.ReqConnectToLobby);
 
         this.ip = ip;
     }

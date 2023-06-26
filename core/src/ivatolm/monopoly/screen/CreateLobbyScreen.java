@@ -11,10 +11,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
-import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
-import ivatolm.monopoly.event.events.request.CreateLobbyEvent;
-import ivatolm.monopoly.event.events.response.CreatedLobbyEvent;
-import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
+import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
+import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
+import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
+import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class CreateLobbyScreen extends BaseScreen {
@@ -27,7 +27,7 @@ public class CreateLobbyScreen extends BaseScreen {
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Server, new CreateLobbyEvent());
+                EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Server, new ReqCreateLobbyEvent());
             }
         });
 
@@ -46,10 +46,10 @@ public class CreateLobbyScreen extends BaseScreen {
     public void handleEvents() {
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
-            case CreatedLobby:
+            case RespLobbyCreated:
                 handleCreatedLobby(event);
                 break;
-            case JoinedLobby:
+            case RespJoinedLobby:
                 handleJoinedLobby(event);
                 break;
             default:
@@ -65,14 +65,14 @@ public class CreateLobbyScreen extends BaseScreen {
     }
 
     private void handleCreatedLobby(MonopolyEvent event) {
-        CreatedLobbyEvent e = (CreatedLobbyEvent) event;
+        RespLobbyCreatedEvent e = (RespLobbyCreatedEvent) event;
 
-        EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Client, new ConnectLobbyEvent(e.getIp()));
+        EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Client, new ReqConnectToLobbyEvent(e.getIp()));
     }
 
     private void handleJoinedLobby(MonopolyEvent event) {
         @SuppressWarnings("unused")
-        JoinedLobbyEvent e = (JoinedLobbyEvent) event;
+        RespJoinedLobbyEvent e = (RespJoinedLobbyEvent) event;
 
         EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
     }

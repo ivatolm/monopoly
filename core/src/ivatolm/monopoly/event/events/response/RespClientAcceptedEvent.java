@@ -4,12 +4,12 @@ import com.badlogic.gdx.net.Socket;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 
-public class ServerAcceptedEvent extends MonopolyEvent {
+public class RespClientAcceptedEvent extends MonopolyEvent {
 
     private Socket socket;
 
-    public ServerAcceptedEvent(Socket socket) {
-        super(Type.ServerAccepted);
+    public RespClientAcceptedEvent(Socket socket) {
+        super(Type.RespClientAccepted);
 
         this.socket = socket;
     }

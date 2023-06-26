@@ -9,14 +9,14 @@ public abstract class MonopolyEvent {
         GoCreateLobbyScreenEvent,
 
         // request
-        ConnectLobby,
-        CreateLobby,
+        ReqConnectToLobby,
+        ReqCreateLobby,
 
         // response
-        JoinedLobby,
-        CreatedLobby,
-        ClientConnected,
-        ServerAccepted,
+        RespJoinedLobby,
+        RespLobbyCreated,
+        RespClientConnected,
+        RespClientAccepted,
     }
 
     private Type type;

@@ -2,12 +2,12 @@ package ivatolm.monopoly.event.events.response;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 
-public class CreatedLobbyEvent extends MonopolyEvent {
+public class RespLobbyCreatedEvent extends MonopolyEvent {
 
     private String ip;
 
-    public CreatedLobbyEvent(String ip) {
-        super(Type.CreatedLobby);
+    public RespLobbyCreatedEvent(String ip) {
+        super(Type.RespLobbyCreated);
 
         this.ip = ip;
     }
