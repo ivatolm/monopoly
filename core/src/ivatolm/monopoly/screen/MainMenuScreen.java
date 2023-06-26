@@ -24,14 +24,14 @@ public class MainMenuScreen extends BaseScreen {
         joinLobbyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Type.Game, new GoJoinLobbyScreenEvent());
+                EventDistributor.send(Type.MainMenuScreen, Type.Game, new GoJoinLobbyScreenEvent());
             }
         });
 
         createLobbyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Type.Game, new GoCreateLobbyScreenEvent());
+                EventDistributor.send(Type.MainMenuScreen, Type.Game, new GoCreateLobbyScreenEvent());
             }
         });
 

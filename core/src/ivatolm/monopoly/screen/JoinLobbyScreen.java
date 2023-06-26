@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
 import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
 import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
@@ -29,7 +30,7 @@ public class JoinLobbyScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 errorMessageLabel.setText("");
-                EventDistributor.send(Type.Client, new ConnectLobbyEvent(ipTextField.getText()));
+                EventDistributor.send(Type.JoinLobbyScreen, Type.Client, new ConnectLobbyEvent(ipTextField.getText()));
             }
         });
 
@@ -48,12 +49,13 @@ public class JoinLobbyScreen extends BaseScreen {
     @Override
     public void handleEvents() {
         MonopolyEvent event = events.pop();
+        System.out.println(event);
         switch (event.getType()) {
-            case ConnectLobby:
+            case JoinedLobby:
                 if (event.getResult()) {
-                    handleConnectSuccess(event);
+                    handleJoinedSuccess(event);
                 } else {
-                    handleConnectFail(event);
+                    handleJoinedFail(event);
                 }
                 break;
             default:
@@ -73,11 +75,14 @@ public class JoinLobbyScreen extends BaseScreen {
         super.dispose();
     }
 
-    private void handleConnectSuccess(MonopolyEvent event) {
-        EventDistributor.send(Type.Game, new JoinedLobbyEvent());
+    private void handleJoinedSuccess(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        JoinedLobbyEvent e = (JoinedLobbyEvent) event;
+
+        EventDistributor.send(Type.JoinLobbyScreen, Type.Game, new GoLobbyScreenEvent());
     }
 
-    private void handleConnectFail(MonopolyEvent event) {
+    private void handleJoinedFail(MonopolyEvent event) {
         String errorMsg = event.getErrorMsg();
 
         errorMessageLabel.setText(errorMsg);

@@ -10,7 +10,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
+import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
 import ivatolm.monopoly.event.events.request.CreateLobbyEvent;
+import ivatolm.monopoly.event.events.response.CreatedLobbyEvent;
+import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
 import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class CreateLobbyScreen extends BaseScreen {
@@ -23,7 +27,7 @@ public class CreateLobbyScreen extends BaseScreen {
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Type.Server, new CreateLobbyEvent());
+                EventDistributor.send(Type.CreateLobbyScreen, Type.Server, new CreateLobbyEvent());
             }
         });
 
@@ -42,6 +46,12 @@ public class CreateLobbyScreen extends BaseScreen {
     public void handleEvents() {
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
+            case CreatedLobby:
+                handleCreatedLobby(event);
+                break;
+            case JoinedLobby:
+                handleJoinedLobby(event);
+                break;
             default:
                 break;
         }
@@ -52,6 +62,19 @@ public class CreateLobbyScreen extends BaseScreen {
         ScreenUtils.clear(Color.BLACK);
 
         super.render(delta);
+    }
+
+    private void handleCreatedLobby(MonopolyEvent event) {
+        CreatedLobbyEvent e = (CreatedLobbyEvent) event;
+
+        EventDistributor.send(Type.CreateLobbyScreen, Type.Client, new ConnectLobbyEvent(e.getIp()));
+    }
+
+    private void handleJoinedLobby(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        JoinedLobbyEvent e = (JoinedLobbyEvent) event;
+
+        EventDistributor.send(Type.CreateLobbyScreen, Type.Game, new GoLobbyScreenEvent());
     }
 
     @Override

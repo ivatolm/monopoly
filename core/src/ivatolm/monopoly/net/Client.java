@@ -13,6 +13,7 @@ import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Type;
 import ivatolm.monopoly.event.events.request.ConnectLobbyEvent;
+import ivatolm.monopoly.event.events.response.JoinedLobbyEvent;
 import ivatolm.monopoly.event.events.response.ServerAcceptedEvent;
 
 public class Client implements EventReceiver {
@@ -21,6 +22,8 @@ public class Client implements EventReceiver {
 
     private Socket socket;
     private ClientSocketHandler socketHandler;
+
+    private EventReceiver.Type sender;
 
     @Override
     public void receive(MonopolyEvent event) {
@@ -34,13 +37,13 @@ public class Client implements EventReceiver {
         }
 
         MonopolyEvent event = events.pop();
-        System.out.println(event.getType());
         switch (event.getType()) {
             case ConnectLobby:
                 handleConnectLobby(event);
                 break;
             case ServerAccepted:
                 handleServerAccepted(event);
+                break;
             default:
                 break;
         }
@@ -48,6 +51,7 @@ public class Client implements EventReceiver {
 
     private void handleConnectLobby(MonopolyEvent event) {
         ConnectLobbyEvent e = (ConnectLobbyEvent) event;
+        sender = e.getSender();
 
         if (socketHandler != null) {
             socketHandler.dispose();
@@ -64,11 +68,12 @@ public class Client implements EventReceiver {
             socket = e.getSocket();
         }
 
-        ConnectLobbyEvent connectLobbyEvent = new ConnectLobbyEvent(null);
-        connectLobbyEvent.setResult(e.getResult());
-        connectLobbyEvent.setErrorMsg(e.getErrorMsg());
+        JoinedLobbyEvent joinedLobbyEvent = new JoinedLobbyEvent();
+        joinedLobbyEvent.setResult(e.getResult());
+        joinedLobbyEvent.setErrorMsg(e.getErrorMsg());
 
-        EventDistributor.send(Type.JoinLobbyScreen, connectLobbyEvent);
+        EventDistributor.send(Type.Client, sender, joinedLobbyEvent);
+        sender = null;
     }
 
     public void dispose() {
@@ -116,7 +121,7 @@ class ClientSocketHandler {
             event.setErrorMsg("Couldn't connect to the host");
         }
 
-        EventDistributor.send(Type.Client, event);
+        EventDistributor.send(Type.Client, Type.Client, event);
     }
 
     void dispose() {

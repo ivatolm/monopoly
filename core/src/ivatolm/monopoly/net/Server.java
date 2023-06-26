@@ -15,6 +15,7 @@ import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Type;
 import ivatolm.monopoly.event.events.response.ClientConnectedEvent;
+import ivatolm.monopoly.event.events.response.CreatedLobbyEvent;
 
 public class Server implements EventReceiver {
 
@@ -60,14 +61,13 @@ public class Server implements EventReceiver {
         socketHandler = new ServerSocketHandler(socket);
         socketHandler.start();
 
-        System.out.println("lobby created");
+        EventDistributor.send(Type.Server, Type.CreateLobbyScreen, new CreatedLobbyEvent("127.0.0.1"));
     }
 
     private void handleClientConnected(MonopolyEvent event) {
         ClientConnectedEvent e = (ClientConnectedEvent) event;
 
         Socket client = e.getSocket();
-        System.out.println(client.isConnected());
     }
 
     public void dispose() {
@@ -109,7 +109,7 @@ class ServerSocketHandler {
         while (run) {
             try {
                 Socket clientSocket = socket.accept(new SocketHints());
-                EventDistributor.send(Type.Server, new ClientConnectedEvent(clientSocket));
+                EventDistributor.send(Type.Server, Type.Server, new ClientConnectedEvent(clientSocket));
             } catch (GdxRuntimeException e) {
                 // timeout expired
             }
