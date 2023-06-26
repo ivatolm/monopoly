@@ -1,1 +1,2 @@
-include 'desktop', 'html', 'core'
+rootProject.name = 'monopoly'
+include('desktop', 'core')

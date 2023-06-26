@@ -45,5 +45,3 @@ tasks.register('dist', Jar) {
 
 
 dist.dependsOn classes
-
-eclipse.project.name = appName + "-desktop"
