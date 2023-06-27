@@ -1,24 +1,19 @@
 package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.kotcrab.vis.ui.widget.VisLabel;
 
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.widget.FlatWidgetFactory;
 
 public class LobbyScreen extends BaseScreen {
 
-    private Label infoLabel;
+    private VisLabel infoLabel;
 
     protected void generateUI() {
-        infoLabel = FlatWidgetFactory.FlatLabel("You are in the lobby");
+        infoLabel = new VisLabel("You are in the lobby");
 
-        VerticalGroup column = new VerticalGroup();
-        column.addActor(infoLabel);
-
-        root.add(column);
+        root.add(infoLabel);
 
         stage.addActor(root);
     }
