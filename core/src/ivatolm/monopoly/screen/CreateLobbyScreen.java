@@ -2,11 +2,9 @@ package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
@@ -15,15 +13,15 @@ import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
-import ivatolm.monopoly.widget.FlatWidgetFactory;
+import ivatolm.monopoly.widget.WidgetConstants;
 
 public class CreateLobbyScreen extends BaseScreen {
 
-    private TextButton connectButton;
-    private Label errorMessageLabel;
+    private VisTextButton connectButton;
 
     protected void generateUI() {
-        connectButton = FlatWidgetFactory.FlatButton("Create", Color.BLUE, 100, 50);
+        connectButton = new VisTextButton("Create");
+
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -31,13 +29,12 @@ public class CreateLobbyScreen extends BaseScreen {
             }
         });
 
-        errorMessageLabel = FlatWidgetFactory.FlatLabel("");
+        connectButton.setColor(Color.BLUE);
+        connectButton.setFocusBorderEnabled(false);
 
-        VerticalGroup column = new VerticalGroup();
-        column.addActor(connectButton);
-        column.addActor(errorMessageLabel);
-
-        root.add(column);
+        root.add(connectButton)
+                .width(WidgetConstants.BUTTON_WIDTH)
+                .height(WidgetConstants.BUTTON_HEIGHT);
 
         stage.addActor(root);
     }
