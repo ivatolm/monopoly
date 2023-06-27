@@ -2,30 +2,30 @@ package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.VisTextField;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
-import ivatolm.monopoly.widget.FlatWidgetFactory;
+import ivatolm.monopoly.widget.WidgetConstants;
 
 public class JoinLobbyScreen extends BaseScreen {
 
-    private TextField ipTextField;
-    private TextButton connectButton;
-    private Label errorMessageLabel;
+    private VisTextField ipTextField;
+    private VisTextButton connectButton;
+    private VisLabel errorMessageLabel;
 
     protected void generateUI() {
-        ipTextField = FlatWidgetFactory.FlatTextField(Color.GRAY, 100, 50);
+        ipTextField = new VisTextField();
+        connectButton = new VisTextButton("Connect");
+        errorMessageLabel = new VisLabel("", Color.RED);
 
-        connectButton = FlatWidgetFactory.FlatButton("Connect", Color.BLUE, 100, 50);
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -35,14 +35,18 @@ public class JoinLobbyScreen extends BaseScreen {
             }
         });
 
-        errorMessageLabel = FlatWidgetFactory.FlatLabel("");
+        ipTextField.setFocusBorderEnabled(false);
 
-        VerticalGroup column = new VerticalGroup();
-        column.addActor(ipTextField);
-        column.addActor(connectButton);
-        column.addActor(errorMessageLabel);
+        connectButton.setColor(Color.BLUE);
+        connectButton.setFocusBorderEnabled(false);
 
-        root.add(column);
+        root.add(ipTextField).colspan(1)
+                .height(WidgetConstants.BUTTON_HEIGHT);
+        root.add(connectButton).colspan(1)
+                .width(WidgetConstants.BUTTON_WIDTH)
+                .height(WidgetConstants.BUTTON_HEIGHT);
+        root.row();
+        root.add(errorMessageLabel).colspan(2);
 
         stage.addActor(root);
     }
