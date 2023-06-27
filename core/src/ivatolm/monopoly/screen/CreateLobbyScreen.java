@@ -2,6 +2,7 @@ package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.kotcrab.vis.ui.widget.VisTextButton;
@@ -33,8 +34,8 @@ public class CreateLobbyScreen extends BaseScreen {
         connectButton.setFocusBorderEnabled(false);
 
         root.add(connectButton)
-                .width(WidgetConstants.BUTTON_WIDTH)
-                .height(WidgetConstants.BUTTON_HEIGHT);
+                .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH, root))
+                .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
 
         stage.addActor(root);
     }

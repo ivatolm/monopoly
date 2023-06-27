@@ -2,6 +2,7 @@ package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.kotcrab.vis.ui.widget.VisLabel;
@@ -41,10 +42,11 @@ public class JoinLobbyScreen extends BaseScreen {
         connectButton.setFocusBorderEnabled(false);
 
         root.add(ipTextField).colspan(1)
-                .height(WidgetConstants.BUTTON_HEIGHT);
+                .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH * 1.5f, root))
+                .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
         root.add(connectButton).colspan(1)
-                .width(WidgetConstants.BUTTON_WIDTH)
-                .height(WidgetConstants.BUTTON_HEIGHT);
+                .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH, root))
+                .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
         root.row();
         root.add(errorMessageLabel).colspan(2);
 

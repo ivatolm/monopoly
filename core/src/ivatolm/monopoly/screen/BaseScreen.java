@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.widget.VisTable;
 
@@ -21,9 +21,7 @@ public abstract class BaseScreen extends ScreenAdapter
 
     public BaseScreen() {
         events = new LinkedList<>();
-        Viewport viewport = new ExtendViewport(
-                Gdx.graphics.getWidth(),
-                Gdx.graphics.getHeight());
+        Viewport viewport = new ScreenViewport();
         stage = new Stage(viewport);
         root = new VisTable(true);
         root.setFillParent(true);
