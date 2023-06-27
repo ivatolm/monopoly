@@ -14,6 +14,7 @@ allprojects {
     ext {
         appName = "Monopoly"
         gdxVersion = "1.11.0"
+        visuiVersion = "1.5.1"
     }
 
     repositories {
@@ -50,6 +51,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 
         api "com.google.protobuf:protobuf-java:3.12.4"
+        api "com.kotcrab.vis:vis-ui:$visuiVersion"
     }
 }
 

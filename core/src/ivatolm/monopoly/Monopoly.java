@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.kotcrab.vis.ui.VisUI;
 
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
@@ -30,6 +31,8 @@ public class Monopoly extends Game implements EventReceiver {
 
 	@Override
 	public void create() {
+		VisUI.load();
+
 		events = new LinkedList<>();
 
 		EventDistributor.register(Endpoint.Game, this);
@@ -99,6 +102,8 @@ public class Monopoly extends Game implements EventReceiver {
 		client.dispose();
 		server.dispose();
 		ResourceManager.dispose();
+
+		VisUI.dispose();
 	}
 
 	@Override

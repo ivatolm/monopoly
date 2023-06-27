@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.kotcrab.vis.ui.widget.VisTable;
 
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
@@ -17,7 +17,7 @@ public abstract class BaseScreen extends ScreenAdapter
 
     protected LinkedList<MonopolyEvent> events;
     protected Stage stage;
-    protected Table root;
+    protected VisTable root;
 
     public BaseScreen() {
         events = new LinkedList<>();
@@ -25,7 +25,7 @@ public abstract class BaseScreen extends ScreenAdapter
                 Gdx.graphics.getWidth(),
                 Gdx.graphics.getHeight());
         stage = new Stage(viewport);
-        root = new Table();
+        root = new VisTable(true);
         root.setFillParent(true);
         generateUI();
     }

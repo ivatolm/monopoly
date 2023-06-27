@@ -2,24 +2,23 @@ package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.events.navigation.GoCreateLobbyScreenEvent;
 import ivatolm.monopoly.event.events.navigation.GoJoinLobbyScreenEvent;
-import ivatolm.monopoly.widget.FlatWidgetFactory;
+import ivatolm.monopoly.widget.WidgetConstants;
 
 public class MainMenuScreen extends BaseScreen {
 
-    private TextButton joinLobbyButton;
-    private TextButton createLobbyButton;
+    private VisTextButton joinLobbyButton;
+    private VisTextButton createLobbyButton;
 
     protected void generateUI() {
-        joinLobbyButton = FlatWidgetFactory.FlatButton("Join lobby", Color.GRAY, 100, 50);
-        createLobbyButton = FlatWidgetFactory.FlatButton("Create lobby", Color.GRAY, 100, 50);
+        joinLobbyButton = new VisTextButton("Join lobby");
+        createLobbyButton = new VisTextButton("Create lobby");
 
         joinLobbyButton.addListener(new ClickListener() {
             @Override
@@ -35,11 +34,13 @@ public class MainMenuScreen extends BaseScreen {
             }
         });
 
-        VerticalGroup column = new VerticalGroup();
-        column.addActor(joinLobbyButton);
-        column.addActor(createLobbyButton);
-
-        root.add(column);
+        root.add(joinLobbyButton)
+                .width(WidgetConstants.BUTTON_WIDTH)
+                .height(WidgetConstants.BUTTON_HEIGHT);
+        root.row();
+        root.add(createLobbyButton)
+                .width(WidgetConstants.BUTTON_WIDTH)
+                .height(WidgetConstants.BUTTON_HEIGHT);
 
         stage.addActor(root);
     }
