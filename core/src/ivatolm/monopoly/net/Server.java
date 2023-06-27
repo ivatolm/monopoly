@@ -16,6 +16,9 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.response.RespClientConnectedEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
+import ivatolm.monopoly.logic.GameProperties;
+import ivatolm.monopoly.logic.Lobby;
+import ivatolm.monopoly.logic.Player;
 
 public class Server implements EventReceiver {
 
@@ -23,6 +26,8 @@ public class Server implements EventReceiver {
 
     private ServerSocket socket;
     private ServerSocketHandler socketHandler;
+
+    private Lobby lobby;
 
     @Override
     public void receive(MonopolyEvent event) {
@@ -61,6 +66,12 @@ public class Server implements EventReceiver {
         socketHandler = new ServerSocketHandler(socket);
         socketHandler.start();
 
+        if (lobby != null) {
+            lobby.dispose();
+        }
+
+        lobby = new Lobby(new GameProperties(2));
+
         EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen, new RespLobbyCreatedEvent("127.0.0.1"));
     }
 
@@ -68,6 +79,11 @@ public class Server implements EventReceiver {
         RespClientConnectedEvent e = (RespClientConnectedEvent) event;
 
         Socket client = e.getSocket();
+
+        Player player = new Player(client);
+        boolean result = lobby.addPlayer(player);
+
+        System.out.println(lobby.getPlayerList().size());
     }
 
     public void dispose() {
