@@ -72,11 +72,8 @@ public class CreateLobbyScreen extends BaseScreen {
     private void handleJoinedLobby(MonopolyEvent event) {
         RespJoinedLobbyEvent e = (RespJoinedLobbyEvent) event;
 
-        System.out.println("here");
-
         EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
 
-        System.out.println("here1");
         EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.LobbyScreen, new ReqInitPlayerEvent(e.getPlayer()));
     }
 

@@ -34,7 +34,6 @@ public class Client implements EventReceiver {
             @Override
             public void run() {
                 while (running) {
-                    System.out.println("cilent thread");
                     handleEvents();
 
                     try {
@@ -43,7 +42,6 @@ public class Client implements EventReceiver {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("client thread done");
             }
         };
 
@@ -63,7 +61,6 @@ public class Client implements EventReceiver {
         }
 
         MonopolyEvent event = events.pop();
-        System.out.println("client: " + event);
         switch (event.getType()) {
             case ReqConnectToLobby:
                 handleConnectLobby(event);
@@ -96,7 +93,6 @@ public class Client implements EventReceiver {
         Player player = null;
         if (e.getResult()) {
             socket = e.getSocket();
-            System.out.println("client");
             player = new Player(new ObjectSocket(socket));
         }
 

@@ -37,7 +37,6 @@ public class Server implements EventReceiver {
             @Override
             public void run() {
                 while (running) {
-                    System.out.println("server thread");
                     handleEvents();
 
                     try {
@@ -46,7 +45,6 @@ public class Server implements EventReceiver {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("server thread done");
             }
         };
 
@@ -66,7 +64,6 @@ public class Server implements EventReceiver {
         }
 
         MonopolyEvent event = events.pop();
-        System.out.println("server: " + event);
         switch (event.getType()) {
             case ReqCreateLobby:
                 handleCreateLobby(event);

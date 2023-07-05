@@ -20,8 +20,6 @@ public class EventDistributor {
 
         EventReceiver receiver = handlers.get(destination);
         receiver.receive(event);
-
-        System.out.println(event);
     }
 
 }

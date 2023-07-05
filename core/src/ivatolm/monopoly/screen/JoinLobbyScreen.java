@@ -57,7 +57,6 @@ public class JoinLobbyScreen extends BaseScreen {
     @Override
     public void handleEvents() {
         MonopolyEvent event = events.pop();
-        System.out.println(event);
         switch (event.getType()) {
             case RespJoinedLobby:
                 if (event.getResult()) {
