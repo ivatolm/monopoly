@@ -2,15 +2,15 @@ package ivatolm.monopoly.logic;
 
 import java.util.UUID;
 
-import com.badlogic.gdx.net.Socket;
+import ivatolm.monopoly.net.ObjectSocket;
 
 public class Player {
 
     private UUID uuid;
 
-    private Socket socket;
+    private ObjectSocket socket;
 
-    public Player(Socket socket) {
+    public Player(ObjectSocket socket) {
         this.uuid = UUID.randomUUID();
         this.socket = socket;
     }
@@ -19,8 +19,12 @@ public class Player {
         return uuid;
     }
 
-    public Socket getSocket() {
+    public ObjectSocket getSocket() {
         return socket;
+    }
+
+    public void dispose() {
+        socket.dispose();
     }
 
 }

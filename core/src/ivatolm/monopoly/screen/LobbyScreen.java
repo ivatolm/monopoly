@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.kotcrab.vis.ui.widget.VisLabel;
 
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.request.ReqInitPlayerEvent;
 
 public class LobbyScreen extends BaseScreen {
 
@@ -22,6 +23,9 @@ public class LobbyScreen extends BaseScreen {
     public void handleEvents() {
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
+            case ReqInitPlayerEvent:
+                handleInitPlayer(event);
+                break;
             default:
                 break;
         }
@@ -32,6 +36,12 @@ public class LobbyScreen extends BaseScreen {
         ScreenUtils.clear(Color.BLACK);
 
         super.render(delta);
+    }
+
+    private void handleInitPlayer(MonopolyEvent event) {
+        ReqInitPlayerEvent e = (ReqInitPlayerEvent) event;
+
+        System.out.println("Player 'generated' UUID:" + e.getPlayer().getUUID());
     }
 
     @Override

@@ -88,9 +88,6 @@ public class Monopoly extends Game implements EventReceiver {
 		if (events.size() > 0) {
 			handleEvents();
 		}
-
-		client.handleEvents();
-		server.handleEvents();
 	}
 
 	@Override
@@ -99,8 +96,10 @@ public class Monopoly extends Game implements EventReceiver {
 		joinLobbyScreen.dispose();
 		createLobbyScreen.dispose();
 		lobbyScreen.dispose();
+
 		client.dispose();
 		server.dispose();
+
 		ResourceManager.dispose();
 
 		VisUI.dispose();

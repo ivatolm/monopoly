@@ -25,9 +25,34 @@ public class Server implements EventReceiver {
     private LinkedList<MonopolyEvent> events = new LinkedList<>();
 
     private ServerSocket socket;
-    private ServerSocketHandler socketHandler;
+    private volatile boolean running;
+
+    private Thread eventHandlerThread;
+    private AcceptThread acceptThread;
 
     private Lobby lobby;
+
+    public Server() {
+        eventHandlerThread = new Thread() {
+            @Override
+            public void run() {
+                while (running) {
+                    System.out.println("server thread");
+                    handleEvents();
+
+                    try {
+                        Thread.sleep(1000 / 60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("server thread done");
+            }
+        };
+
+        running = true;
+        eventHandlerThread.start();
+    }
 
     @Override
     public void receive(MonopolyEvent event) {
@@ -41,6 +66,7 @@ public class Server implements EventReceiver {
         }
 
         MonopolyEvent event = events.pop();
+        System.out.println("server: " + event);
         switch (event.getType()) {
             case ReqCreateLobby:
                 handleCreateLobby(event);
@@ -56,15 +82,18 @@ public class Server implements EventReceiver {
     private void handleCreateLobby(MonopolyEvent event) {
         if (socket != null) {
             socket.dispose();
-        }
 
-        if (socketHandler != null) {
-            socketHandler.dispose();
+            acceptThread.dispose();
+            try {
+                acceptThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         socket = Gdx.net.newServerSocket(Protocol.TCP, "127.0.0.1", 26481, new ServerSocketHints());
-        socketHandler = new ServerSocketHandler(socket);
-        socketHandler.start();
+        acceptThread = new AcceptThread(socket);
+        acceptThread.start();
 
         if (lobby != null) {
             lobby.dispose();
@@ -79,50 +108,59 @@ public class Server implements EventReceiver {
         RespClientConnectedEvent e = (RespClientConnectedEvent) event;
 
         Socket client = e.getSocket();
+        boolean result = lobby.addPlayer(new Player(new ObjectSocket(client)));
 
-        Player player = new Player(client);
-        boolean result = lobby.addPlayer(player);
+        // MonopolyEvent updateLobbyEvent = new
+        // ReqUpdateLobbyInfoEvent(lobby.getPlayerList());
+        // for (Player player : lobby.getPlayerList()) {
+        // ObjectSocket socket = player.getSocket();
 
-        System.out.println(lobby.getPlayerList().size());
+        // try {
+        // socket.send(updateLobbyEvent);
+        // } catch (IOException e1) {
+        // e1.printStackTrace();
+        // }
+        // }
     }
 
     public void dispose() {
-        if (socket != null) {
-            socket.dispose();
+        running = false;
+
+        try {
+            eventHandlerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        if (socketHandler != null) {
-            socketHandler.dispose();
+        if (socket != null) {
+            socket.dispose();
+
+            acceptThread.dispose();
+            try {
+                acceptThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
 }
 
-class ServerSocketHandler {
+class AcceptThread extends Thread {
 
-    private volatile boolean run;
     private ServerSocket socket;
-    private Thread acceptThread;
 
-    ServerSocketHandler(ServerSocket socket) {
+    private volatile boolean running;
+
+    public AcceptThread(ServerSocket socket) {
         this.socket = socket;
 
-        acceptThread = new Thread() {
-            @Override
-            public void run() {
-                accept();
-            }
-        };
-
-        run = true;
+        running = true;
     }
 
-    void start() {
-        acceptThread.start();
-    }
-
-    void accept() {
-        while (run) {
+    @Override
+    public void run() {
+        while (running) {
             try {
                 Socket clientSocket = socket.accept(new SocketHints());
                 EventDistributor.send(Endpoint.Server, Endpoint.Server, new RespClientConnectedEvent(clientSocket));
@@ -132,14 +170,8 @@ class ServerSocketHandler {
         }
     }
 
-    void dispose() {
-        run = false;
-
-        try {
-            acceptThread.join();
-        } catch (InterruptedException e) {
-            // doesn't matter
-        }
+    public void dispose() {
+        running = false;
     }
 
 }

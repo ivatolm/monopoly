@@ -14,6 +14,7 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
+import ivatolm.monopoly.logic.Player;
 import ivatolm.monopoly.event.events.response.RespClientAcceptedEvent;
 
 public class Client implements EventReceiver {
@@ -21,9 +22,34 @@ public class Client implements EventReceiver {
     private LinkedList<MonopolyEvent> events = new LinkedList<>();
 
     private Socket socket;
-    private ClientSocketHandler socketHandler;
+    private volatile boolean running;
+
+    private Thread eventHandlerThread;
+    private Thread connectThread;
 
     private EventReceiver.Endpoint sender;
+
+    public Client() {
+        eventHandlerThread = new Thread() {
+            @Override
+            public void run() {
+                while (running) {
+                    System.out.println("cilent thread");
+                    handleEvents();
+
+                    try {
+                        Thread.sleep(1000 / 60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("client thread done");
+            }
+        };
+
+        running = true;
+        eventHandlerThread.start();
+    }
 
     @Override
     public void receive(MonopolyEvent event) {
@@ -37,12 +63,13 @@ public class Client implements EventReceiver {
         }
 
         MonopolyEvent event = events.pop();
+        System.out.println("client: " + event);
         switch (event.getType()) {
             case ReqConnectToLobby:
                 handleConnectLobby(event);
                 break;
             case RespClientAccepted:
-                handleServerAccepted(event);
+                handleClientAccepted(event);
                 break;
             default:
                 break;
@@ -53,22 +80,27 @@ public class Client implements EventReceiver {
         ReqConnectToLobbyEvent e = (ReqConnectToLobbyEvent) event;
         sender = e.getSender();
 
-        if (socketHandler != null) {
-            socketHandler.dispose();
-        }
-
-        socketHandler = new ClientSocketHandler(e.getIp());
-        socketHandler.start();
+        connectThread = new ConnectThread(e.getIp());
+        connectThread.start();
     }
 
-    private void handleServerAccepted(MonopolyEvent event) {
-        RespClientAcceptedEvent e = (RespClientAcceptedEvent) event;
-
-        if (e.getResult()) {
-            socket = e.getSocket();
+    private void handleClientAccepted(MonopolyEvent event) {
+        try {
+            connectThread.join();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
         }
 
-        RespJoinedLobbyEvent joinedLobbyEvent = new RespJoinedLobbyEvent();
+        RespClientAcceptedEvent e = (RespClientAcceptedEvent) event;
+
+        Player player = null;
+        if (e.getResult()) {
+            socket = e.getSocket();
+            System.out.println("client");
+            player = new Player(new ObjectSocket(socket));
+        }
+
+        RespJoinedLobbyEvent joinedLobbyEvent = new RespJoinedLobbyEvent(player);
         joinedLobbyEvent.setResult(e.getResult());
         joinedLobbyEvent.setErrorMsg(e.getErrorMsg());
 
@@ -77,38 +109,29 @@ public class Client implements EventReceiver {
     }
 
     public void dispose() {
-        if (socket != null) {
-            socket.dispose();
-        }
+        running = false;
 
-        if (socketHandler != null) {
-            socketHandler.dispose();
+        try {
+            eventHandlerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
 }
 
-class ClientSocketHandler {
+class ConnectThread extends Thread {
 
-    private String ip;
-    private Thread connectThread;
+    private final String ip;
 
-    ClientSocketHandler(String ip) {
+    public ConnectThread(String ip) {
+        super();
+
         this.ip = ip;
-
-        connectThread = new Thread() {
-            @Override
-            public void run() {
-                connect();
-            }
-        };
     }
 
-    void start() {
-        connectThread.start();
-    }
-
-    void connect() {
+    @Override
+    public void run() {
         RespClientAcceptedEvent event;
 
         try {
@@ -122,14 +145,6 @@ class ClientSocketHandler {
         }
 
         EventDistributor.send(Endpoint.Client, Endpoint.Client, event);
-    }
-
-    void dispose() {
-        try {
-            connectThread.join();
-        } catch (InterruptedException e) {
-            // doesn't matter
-        }
     }
 
 }

@@ -16,9 +16,12 @@ public class EventDistributor {
             MonopolyEvent event) {
 
         event.setSender(sender);
+        event.setReceiver(destination);
 
         EventReceiver receiver = handlers.get(destination);
         receiver.receive(event);
+
+        System.out.println(event);
     }
 
 }

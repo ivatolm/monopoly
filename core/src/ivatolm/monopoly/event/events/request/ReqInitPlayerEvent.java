@@ -1,14 +1,14 @@
-package ivatolm.monopoly.event.events.response;
+package ivatolm.monopoly.event.events.request;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.logic.Player;
 
-public class RespJoinedLobbyEvent extends MonopolyEvent {
+public class ReqInitPlayerEvent extends MonopolyEvent {
 
     private Player player;
 
-    public RespJoinedLobbyEvent(Player player) {
-        super(Type.RespJoinedLobby);
+    public ReqInitPlayerEvent(Player player) {
+        super(Type.ReqInitPlayerEvent);
 
         this.player = player;
     }
