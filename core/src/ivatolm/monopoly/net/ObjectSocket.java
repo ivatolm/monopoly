@@ -45,4 +45,8 @@ public class ObjectSocket {
         socket.dispose();
     }
 
+    public Socket getSocket() {
+        return socket;
+    }
+
 }

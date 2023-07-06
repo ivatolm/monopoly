@@ -98,7 +98,8 @@ public class Server implements EventReceiver {
 
         lobby = new Lobby(new GameProperties(2));
 
-        EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen, new RespLobbyCreatedEvent("127.0.0.1"));
+        EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen,
+                new RespLobbyCreatedEvent("127.0.0.1"));
     }
 
     private void handleClientConnected(MonopolyEvent event) {

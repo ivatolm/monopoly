@@ -103,7 +103,7 @@ class NetworkThread extends Thread {
             try {
                 event = this.socket.receive();
             } catch (IOException e) {
-                e.printStackTrace();
+                break;
             }
 
             EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, event);
@@ -112,6 +112,7 @@ class NetworkThread extends Thread {
 
     public void dispose() {
         running = false;
+        socket.getSocket().dispose();
     }
 
 }

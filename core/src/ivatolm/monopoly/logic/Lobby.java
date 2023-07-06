@@ -34,6 +34,9 @@ public class Lobby {
 
     public void removePlayer(UUID uuid) {
         players.remove(uuid);
+
+        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
+        broadcast(updateLobbyInfo);
     }
 
     private void broadcast(MonopolyEvent event) {
