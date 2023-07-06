@@ -1,4 +1,4 @@
-package ivatolm.monopoly.event.events.request;
+package ivatolm.monopoly.event.events.net;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.logic.Player;

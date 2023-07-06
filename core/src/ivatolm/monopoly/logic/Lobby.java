@@ -1,8 +1,12 @@
 package ivatolm.monopoly.logic;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
+
+import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.net.ReqInitPlayerEvent;
 
 public class Lobby {
 
@@ -18,17 +22,33 @@ public class Lobby {
         players = new HashMap<>();
     }
 
-    public boolean addPlayer(Player player) {
-        if (players.size() + 1 <= properties.getPlayerCount()) {
-            players.put(player.getUUID(), player);
-            return true;
+    public void addPlayer(Player player) {
+        if (players.size() + 1 > properties.getPlayerCount()) {
+            return;
         }
 
-        return false;
+        players.put(player.getUUID(), player);
+
+        ReqInitPlayerEvent event = new ReqInitPlayerEvent(player);
+        try {
+            player.getSocket().send(event);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removePlayer(UUID uuid) {
         players.remove(uuid);
+    }
+
+    private void broadcast(MonopolyEvent event) {
+        for (Player player : players.values()) {
+            try {
+                player.getSocket().send(event);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Collection<Player> getPlayerList() {

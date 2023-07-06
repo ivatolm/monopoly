@@ -14,7 +14,6 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
-import ivatolm.monopoly.logic.Player;
 import ivatolm.monopoly.event.events.response.RespClientAcceptedEvent;
 
 public class Client implements EventReceiver {
@@ -90,13 +89,13 @@ public class Client implements EventReceiver {
 
         RespClientAcceptedEvent e = (RespClientAcceptedEvent) event;
 
-        Player player = null;
+        ObjectSocket objectSocket = null;
         if (e.getResult()) {
             socket = e.getSocket();
-            player = new Player(new ObjectSocket(socket));
+            objectSocket = new ObjectSocket(socket);
         }
 
-        RespJoinedLobbyEvent joinedLobbyEvent = new RespJoinedLobbyEvent(player);
+        RespJoinedLobbyEvent joinedLobbyEvent = new RespJoinedLobbyEvent(objectSocket);
         joinedLobbyEvent.setResult(e.getResult());
         joinedLobbyEvent.setErrorMsg(e.getErrorMsg());
 

@@ -1,14 +1,15 @@
 package ivatolm.monopoly.logic;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import ivatolm.monopoly.net.ObjectSocket;
 
-public class Player {
+public class Player implements Serializable {
 
     private UUID uuid;
 
-    private ObjectSocket socket;
+    private transient ObjectSocket socket;
 
     public Player(ObjectSocket socket) {
         this.uuid = UUID.randomUUID();

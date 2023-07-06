@@ -1,11 +1,14 @@
 package ivatolm.monopoly.screen;
 
+import java.io.IOException;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.kotcrab.vis.ui.widget.VisLabel;
 
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.request.ReqInitPlayerEvent;
+import ivatolm.monopoly.event.events.net.ReqInitPlayerEvent;
+import ivatolm.monopoly.event.events.request.ReqInitObjectSocketEvent;
 
 public class LobbyScreen extends BaseScreen {
 
@@ -23,7 +26,7 @@ public class LobbyScreen extends BaseScreen {
     public void handleEvents() {
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
-            case ReqInitPlayerEvent:
+            case ReqInitObjectSocketEvent:
                 handleInitPlayer(event);
                 break;
             default:
@@ -39,9 +42,16 @@ public class LobbyScreen extends BaseScreen {
     }
 
     private void handleInitPlayer(MonopolyEvent event) {
-        ReqInitPlayerEvent e = (ReqInitPlayerEvent) event;
+        ReqInitObjectSocketEvent e = (ReqInitObjectSocketEvent) event;
 
-        System.out.println("Player 'generated' UUID:" + e.getPlayer().getUUID());
+        ReqInitPlayerEvent initPlayerEvent = null;
+        try {
+            initPlayerEvent = (ReqInitPlayerEvent) e.getObjectSocket().receive();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        System.out.println("Received player data: " + initPlayerEvent.getPlayer().getUUID());
     }
 
     @Override

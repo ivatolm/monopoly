@@ -1,14 +1,14 @@
-package ivatolm.monopoly.event.events.response;
+package ivatolm.monopoly.event.events.request;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.net.ObjectSocket;
 
-public class RespJoinedLobbyEvent extends MonopolyEvent {
+public class ReqInitObjectSocketEvent extends MonopolyEvent {
 
     private ObjectSocket objectSocket;
 
-    public RespJoinedLobbyEvent(ObjectSocket objectSocket) {
-        super(Type.RespJoinedLobby);
+    public ReqInitObjectSocketEvent(ObjectSocket objectSocket) {
+        super(Type.ReqInitObjectSocketEvent);
 
         this.objectSocket = objectSocket;
     }

@@ -105,19 +105,7 @@ public class Server implements EventReceiver {
         RespClientConnectedEvent e = (RespClientConnectedEvent) event;
 
         Socket client = e.getSocket();
-        boolean result = lobby.addPlayer(new Player(new ObjectSocket(client)));
-
-        // MonopolyEvent updateLobbyEvent = new
-        // ReqUpdateLobbyInfoEvent(lobby.getPlayerList());
-        // for (Player player : lobby.getPlayerList()) {
-        // ObjectSocket socket = player.getSocket();
-
-        // try {
-        // socket.send(updateLobbyEvent);
-        // } catch (IOException e1) {
-        // e1.printStackTrace();
-        // }
-        // }
+        lobby.addPlayer(new Player(new ObjectSocket(client)));
     }
 
     public void dispose() {

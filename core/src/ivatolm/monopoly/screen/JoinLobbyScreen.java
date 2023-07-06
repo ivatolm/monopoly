@@ -13,7 +13,7 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
-import ivatolm.monopoly.event.events.request.ReqInitPlayerEvent;
+import ivatolm.monopoly.event.events.request.ReqInitObjectSocketEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
 import ivatolm.monopoly.widget.WidgetConstants;
 
@@ -86,7 +86,8 @@ public class JoinLobbyScreen extends BaseScreen {
         RespJoinedLobbyEvent e = (RespJoinedLobbyEvent) event;
 
         EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
-        EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.LobbyScreen, new ReqInitPlayerEvent(e.getPlayer()));
+        EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.LobbyScreen,
+                new ReqInitObjectSocketEvent(e.getObjectSocket()));
     }
 
     private void handleJoinedFail(MonopolyEvent event) {

@@ -14,13 +14,16 @@ public abstract class MonopolyEvent implements Serializable {
         ReqConnectToLobby,
         ReqCreateLobby,
         ReqUpdateLobbyInfoEvent,
-        ReqInitPlayerEvent,
+        ReqInitObjectSocketEvent,
 
         // response
         RespJoinedLobby,
         RespLobbyCreated,
         RespClientConnected,
         RespClientAccepted,
+
+        // network
+        ReqInitPlayerEvent,
     }
 
     private Type type;
