@@ -8,6 +8,7 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqConnectEvent;
+import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
 
@@ -69,6 +70,9 @@ public class MonopolyClient implements EventReceiver {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        client.sendTCP(new ReqDisconnectEvent());
+        client.close();
     }
 
     private void handleConnectLobby(MonopolyEvent event) {

@@ -26,7 +26,6 @@ public class LobbyScreen extends BaseScreen {
     @Override
     public void handleEvents() {
         MonopolyEvent event = events.pop();
-        System.out.println(event);
         switch (event.getType()) {
             case ReqInitClientEvent:
                 handleInitClient(event);
@@ -53,8 +52,6 @@ public class LobbyScreen extends BaseScreen {
             public void received(Connection connection, Object object) {
                 if (object instanceof ReqUpdateLobbyInfoEvent) {
                     ReqUpdateLobbyInfoEvent updateEvent = (ReqUpdateLobbyInfoEvent) object;
-
-                    System.out.println("here");
 
                     EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, updateEvent);
                 }

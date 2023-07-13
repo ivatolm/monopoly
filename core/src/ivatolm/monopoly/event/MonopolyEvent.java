@@ -25,6 +25,7 @@ public abstract class MonopolyEvent implements Serializable {
 
         // network
         ReqConnectEvent,
+        ReqDisconnectEvent,
     }
 
     private Type type;

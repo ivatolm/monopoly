@@ -11,6 +11,7 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqConnectEvent;
+import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
 import ivatolm.monopoly.logic.GameProperties;
 import ivatolm.monopoly.logic.Lobby;
@@ -66,6 +67,9 @@ public class MonopolyServer implements EventReceiver {
             case ReqConnectEvent:
                 handleConnectEvent(event);
                 break;
+            case ReqDisconnectEvent:
+                handleDisconnectEvent(event);
+                break;
             default:
                 break;
         }
@@ -96,6 +100,12 @@ public class MonopolyServer implements EventReceiver {
         lobby.addPlayer(new Player(e.getConnection()));
     }
 
+    private void handleDisconnectEvent(MonopolyEvent event) {
+        ReqDisconnectEvent e = (ReqDisconnectEvent) event;
+
+        lobby.removePlayer(e.getConnection());
+    }
+
     private void setupServer() {
         server = new Server();
         server.start();
@@ -114,7 +124,12 @@ public class MonopolyServer implements EventReceiver {
                     ReqConnectEvent request = (ReqConnectEvent) object;
                     request.setConnection(connection);
 
-                    System.out.println("Connection request received");
+                    EventDistributor.send(Endpoint.Server, Endpoint.Server, request);
+                }
+
+                if (object instanceof ReqDisconnectEvent) {
+                    ReqDisconnectEvent request = (ReqDisconnectEvent) object;
+                    request.setConnection(connection);
 
                     EventDistributor.send(Endpoint.Server, Endpoint.Server, request);
                 }

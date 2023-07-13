@@ -1,6 +1,9 @@
 package ivatolm.monopoly.logic;
 
 import java.util.HashMap;
+
+import com.esotericsoftware.kryonet.Connection;
+
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
 
@@ -38,6 +41,18 @@ public class Lobby {
 
     public void removePlayer(String uuid) {
         players.remove(uuid);
+
+        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
+        broadcast(updateLobbyInfo);
+    }
+
+    public void removePlayer(Connection connection) {
+        for (Player player : players.values()) {
+            if (player.getConnection() == connection) {
+                players.remove(player.getUUID());
+                break;
+            }
+        }
 
         MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
         broadcast(updateLobbyInfo);
