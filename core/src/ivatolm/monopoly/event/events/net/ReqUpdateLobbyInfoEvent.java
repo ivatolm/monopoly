@@ -7,6 +7,10 @@ public class ReqUpdateLobbyInfoEvent extends MonopolyEvent {
 
     private Player[] players;
 
+    public ReqUpdateLobbyInfoEvent() {
+        super(Type.ReqUpdateLobbyInfoEvent);
+    }
+
     public ReqUpdateLobbyInfoEvent(Player[] players) {
         super(Type.ReqUpdateLobbyInfoEvent);
 

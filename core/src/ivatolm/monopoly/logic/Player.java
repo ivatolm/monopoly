@@ -3,29 +3,33 @@ package ivatolm.monopoly.logic;
 import java.io.Serializable;
 import java.util.UUID;
 
-import ivatolm.monopoly.net.ObjectSocket;
+import com.esotericsoftware.kryonet.Connection;
 
 public class Player implements Serializable {
 
-    private UUID uuid;
+    private String uuid;
 
-    private transient ObjectSocket socket;
+    private transient Connection connection;
 
-    public Player(ObjectSocket socket) {
-        this.uuid = UUID.randomUUID();
-        this.socket = socket;
+    public Player() {
+
     }
 
-    public UUID getUUID() {
+    public Player(Connection connection) {
+        this.uuid = UUID.randomUUID().toString();
+        this.connection = connection;
+    }
+
+    public String getUUID() {
         return uuid;
     }
 
-    public ObjectSocket getSocket() {
-        return socket;
+    public Connection getConnection() {
+        return connection;
     }
 
     public void dispose() {
-        socket.dispose();
+        connection.close();
     }
 
 }

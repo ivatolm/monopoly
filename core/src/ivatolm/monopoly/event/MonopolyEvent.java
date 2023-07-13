@@ -14,21 +14,22 @@ public abstract class MonopolyEvent implements Serializable {
         ReqConnectToLobby,
         ReqCreateLobby,
         ReqUpdateLobbyInfoEvent,
-        ReqInitObjectSocketEvent,
+        ReqInitClientEvent,
 
         // response
         RespJoinedLobby,
         RespLobbyCreated,
         RespClientConnected,
+        RespClientDisconnected,
         RespClientAccepted,
 
         // network
-        ReqInitPlayerEvent,
+        ReqConnectEvent,
     }
 
     private Type type;
-    private EventReceiver.Endpoint sender;
-    private EventReceiver.Endpoint receiver;
+    private transient EventReceiver.Endpoint sender;
+    private transient EventReceiver.Endpoint receiver;
     private boolean result;
     private String errorMsg;
 

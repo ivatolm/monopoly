@@ -12,7 +12,7 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
-import ivatolm.monopoly.event.events.request.ReqInitObjectSocketEvent;
+import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
 import ivatolm.monopoly.widget.WidgetConstants;
@@ -75,7 +75,7 @@ public class CreateLobbyScreen extends BaseScreen {
         EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Game, new GoLobbyScreenEvent());
 
         EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.LobbyScreen,
-                new ReqInitObjectSocketEvent(e.getObjectSocket()));
+                new ReqInitClientEvent(e.getClient()));
     }
 
     @Override

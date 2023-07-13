@@ -8,8 +8,8 @@ import com.kotcrab.vis.ui.VisUI;
 
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.net.Client;
-import ivatolm.monopoly.net.Server;
+import ivatolm.monopoly.net.MonopolyClient;
+import ivatolm.monopoly.net.MonopolyServer;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.resource.ResourceManager;
 import ivatolm.monopoly.screen.BaseScreen;
@@ -26,8 +26,8 @@ public class Monopoly extends Game implements EventReceiver {
 	private JoinLobbyScreen joinLobbyScreen;
 	private CreateLobbyScreen createLobbyScreen;
 	private LobbyScreen lobbyScreen;
-	private Client client;
-	private Server server;
+	private MonopolyClient client;
+	private MonopolyServer server;
 
 	@Override
 	public void create() {
@@ -49,10 +49,10 @@ public class Monopoly extends Game implements EventReceiver {
 		lobbyScreen = new LobbyScreen();
 		EventDistributor.register(Endpoint.LobbyScreen, lobbyScreen);
 
-		client = new Client();
+		client = new MonopolyClient();
 		EventDistributor.register(Endpoint.Client, client);
 
-		server = new Server();
+		server = new MonopolyServer();
 		EventDistributor.register(Endpoint.Server, server);
 
 		setScreen(mainMenuScreen);

@@ -1,21 +1,17 @@
 package ivatolm.monopoly.screen;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import com.kotcrab.vis.ui.widget.VisLabel;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
-import ivatolm.monopoly.event.events.request.ReqInitObjectSocketEvent;
-import ivatolm.monopoly.net.ObjectSocket;
+import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
 
 public class LobbyScreen extends BaseScreen {
-
-    private NetworkThread networkThread;
 
     private VisLabel infoLabel;
 
@@ -30,12 +26,15 @@ public class LobbyScreen extends BaseScreen {
     @Override
     public void handleEvents() {
         MonopolyEvent event = events.pop();
+        System.out.println(event);
         switch (event.getType()) {
-            case ReqInitObjectSocketEvent:
-                handleInitPlayer(event);
+            case ReqInitClientEvent:
+                handleInitClient(event);
+                break;
+            case ReqUpdateLobbyInfoEvent:
+                handleUpdateLobbyInfo(event);
                 break;
             default:
-                handleUpdateLobbyInfo(event);
                 break;
         }
     }
@@ -47,21 +46,20 @@ public class LobbyScreen extends BaseScreen {
         super.render(delta);
     }
 
-    private void handleInitPlayer(MonopolyEvent event) {
-        ReqInitObjectSocketEvent e = (ReqInitObjectSocketEvent) event;
+    private void handleInitClient(MonopolyEvent event) {
+        ReqInitClientEvent e = (ReqInitClientEvent) event;
 
-        if (networkThread != null) {
-            networkThread.dispose();
+        e.getClient().addListener(new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof ReqUpdateLobbyInfoEvent) {
+                    ReqUpdateLobbyInfoEvent updateEvent = (ReqUpdateLobbyInfoEvent) object;
 
-            try {
-                networkThread.join();
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
+                    System.out.println("here");
+
+                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, updateEvent);
+                }
             }
-        }
-
-        networkThread = new NetworkThread(e.getObjectSocket());
-        networkThread.start();
+        });
     }
 
     private void handleUpdateLobbyInfo(MonopolyEvent event) {
@@ -73,46 +71,6 @@ public class LobbyScreen extends BaseScreen {
     @Override
     public void dispose() {
         super.dispose();
-
-        networkThread.dispose();
-        try {
-            networkThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-}
-
-class NetworkThread extends Thread {
-
-    private ObjectSocket socket;
-
-    private volatile boolean running;
-
-    public NetworkThread(ObjectSocket socket) {
-        this.socket = socket;
-
-        running = true;
-    }
-
-    @Override
-    public void run() {
-        while (running) {
-            MonopolyEvent event = null;
-            try {
-                event = this.socket.receive();
-            } catch (IOException e) {
-                break;
-            }
-
-            EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, event);
-        }
-    }
-
-    public void dispose() {
-        running = false;
-        socket.getSocket().dispose();
     }
 
 }
