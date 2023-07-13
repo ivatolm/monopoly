@@ -71,8 +71,16 @@ public class MonopolyClient implements EventReceiver {
             e.printStackTrace();
         }
 
-        client.sendTCP(new ReqDisconnectEvent());
-        client.close();
+        if (client != null) {
+            client.sendTCP(new ReqDisconnectEvent());
+            client.stop();
+
+            try {
+                client.dispose();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void handleConnectLobby(MonopolyEvent event) {
@@ -83,7 +91,7 @@ public class MonopolyClient implements EventReceiver {
         RespJoinedLobbyEvent joinedLobbyEvent = new RespJoinedLobbyEvent(client);
         try {
             client.connect(100, e.getIp(), 27841);
-            client.sendTCP(new ReqConnectEvent());
+            client.sendTCP(new ReqConnectEvent(e.getName()));
         } catch (IOException e1) {
             joinedLobbyEvent.setErrorMsg(e.getErrorMsg());
         }

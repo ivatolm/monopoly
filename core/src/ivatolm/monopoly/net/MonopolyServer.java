@@ -12,6 +12,7 @@ import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqConnectEvent;
 import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
+import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
 import ivatolm.monopoly.logic.GameProperties;
 import ivatolm.monopoly.logic.Lobby;
@@ -83,21 +84,33 @@ public class MonopolyServer implements EventReceiver {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        if (server != null) {
+            server.stop();
+
+            try {
+                server.dispose();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void handleCreateLobby(MonopolyEvent event) {
+        ReqCreateLobbyEvent e = (ReqCreateLobbyEvent) event;
+
         setupServer();
 
         lobby = new Lobby(new GameProperties(2));
 
         EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen,
-                new RespLobbyCreatedEvent("127.0.0.1"));
+                new RespLobbyCreatedEvent("127.0.0.1", e.getName()));
     }
 
     private void handleConnectEvent(MonopolyEvent event) {
         ReqConnectEvent e = (ReqConnectEvent) event;
 
-        lobby.addPlayer(new Player(e.getConnection()));
+        lobby.addPlayer(new Player(e.getConnection(), e.getName()));
     }
 
     private void handleDisconnectEvent(MonopolyEvent event) {

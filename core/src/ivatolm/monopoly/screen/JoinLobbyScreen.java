@@ -19,11 +19,18 @@ import ivatolm.monopoly.widget.WidgetConstants;
 
 public class JoinLobbyScreen extends BaseScreen {
 
+    private VisLabel nameLabel;
+    private VisTextField nameTextField;
+    private VisLabel ipLabel;
     private VisTextField ipTextField;
     private VisTextButton connectButton;
     private VisLabel errorMessageLabel;
 
     protected void generateUI() {
+        nameLabel = new VisLabel("Name: ");
+        nameTextField = new VisTextField();
+
+        ipLabel = new VisLabel("IP: ");
         ipTextField = new VisTextField();
         connectButton = new VisTextButton("Connect");
         errorMessageLabel = new VisLabel("", Color.RED);
@@ -32,20 +39,37 @@ public class JoinLobbyScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 errorMessageLabel.setText("");
+
+                String name = nameTextField.getText();
+                if (name.isBlank()) {
+                    errorMessageLabel.setText("Name cannot be blank");
+                    return;
+                }
+
+                name = name.strip();
+
                 EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Client,
-                        new ReqConnectToLobbyEvent(ipTextField.getText()));
+                        new ReqConnectToLobbyEvent(ipTextField.getText(), name));
             }
         });
 
+        nameTextField.setFocusBorderEnabled(false);
         ipTextField.setFocusBorderEnabled(false);
 
         connectButton.setColor(Color.BLUE);
         connectButton.setFocusBorderEnabled(false);
 
-        root.add(ipTextField).colspan(1)
+        root.add(nameLabel).colspan(1);
+        root.add(nameTextField).colspan(1)
                 .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH * 1.5f, root))
                 .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
-        root.add(connectButton).colspan(1)
+        root.row();
+        root.add(ipLabel).colspan(1);
+        root.add(ipTextField).colspan(2)
+                .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH * 1.5f, root))
+                .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
+        root.row();
+        root.add(connectButton).colspan(2)
                 .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH, root))
                 .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
         root.row();

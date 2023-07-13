@@ -5,20 +5,22 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.kotcrab.vis.ui.widget.VisLabel;
+import com.kotcrab.vis.ui.widget.VisTable;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
+import ivatolm.monopoly.logic.Player;
 
 public class LobbyScreen extends BaseScreen {
 
-    private VisLabel infoLabel;
+    private VisTable players;
 
     protected void generateUI() {
-        infoLabel = new VisLabel("You are in the lobby");
+        players = new VisTable(true);
 
-        root.add(infoLabel);
+        root.add(players);
 
         stage.addActor(root);
     }
@@ -62,7 +64,15 @@ public class LobbyScreen extends BaseScreen {
     private void handleUpdateLobbyInfo(MonopolyEvent event) {
         ReqUpdateLobbyInfoEvent e = (ReqUpdateLobbyInfoEvent) event;
 
-        infoLabel.setText(e.getPlayerList().length);
+        Player[] list = e.getPlayerList();
+
+        players.clear();
+        players.add("Connected players count: " + list.length);
+        players.row();
+        for (Player player : list) {
+            players.add(new VisLabel(player.getName()));
+            players.row();
+        }
     }
 
     @Override

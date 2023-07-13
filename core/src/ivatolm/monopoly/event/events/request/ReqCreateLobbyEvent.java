@@ -4,8 +4,16 @@ import ivatolm.monopoly.event.MonopolyEvent;
 
 public class ReqCreateLobbyEvent extends MonopolyEvent {
 
-    public ReqCreateLobbyEvent() {
+    private String name;
+
+    public ReqCreateLobbyEvent(String name) {
         super(Type.ReqCreateLobby);
+
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

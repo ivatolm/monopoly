@@ -8,16 +8,18 @@ import com.esotericsoftware.kryonet.Connection;
 public class Player implements Serializable {
 
     private String uuid;
-
     private transient Connection connection;
+
+    private String name;
 
     public Player() {
 
     }
 
-    public Player(Connection connection) {
+    public Player(Connection connection, String name) {
         this.uuid = UUID.randomUUID().toString();
         this.connection = connection;
+        this.name = name;
     }
 
     public String getUUID() {
@@ -26,6 +28,10 @@ public class Player implements Serializable {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void dispose() {

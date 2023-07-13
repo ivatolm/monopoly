@@ -5,7 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTextButton;
+import com.kotcrab.vis.ui.widget.VisTextField;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
@@ -19,24 +21,50 @@ import ivatolm.monopoly.widget.WidgetConstants;
 
 public class CreateLobbyScreen extends BaseScreen {
 
+    private VisLabel nameLabel;
+    private VisTextField nameTextField;
     private VisTextButton connectButton;
+    private VisLabel errorMessageLabel;
 
     protected void generateUI() {
+        nameLabel = new VisLabel("Name: ");
+        nameTextField = new VisTextField();
         connectButton = new VisTextButton("Create");
+        errorMessageLabel = new VisLabel("", Color.RED);
 
         connectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Server, new ReqCreateLobbyEvent());
+                errorMessageLabel.setText("");
+
+                String name = nameTextField.getText();
+                if (name.isBlank()) {
+                    errorMessageLabel.setText("Name cannot be blank");
+                    return;
+                }
+
+                name = name.strip();
+
+                EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Server,
+                        new ReqCreateLobbyEvent(name));
             }
         });
+
+        nameTextField.setFocusBorderEnabled(false);
 
         connectButton.setColor(Color.BLUE);
         connectButton.setFocusBorderEnabled(false);
 
-        root.add(connectButton)
+        root.add(nameLabel).colspan(1);
+        root.add(nameTextField).colspan(1)
+                .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH * 1.5f, root))
+                .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
+        root.row();
+        root.add(connectButton).colspan(2)
                 .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH, root))
                 .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
+        root.row();
+        root.add(errorMessageLabel).colspan(2);
 
         stage.addActor(root);
     }
@@ -66,7 +94,8 @@ public class CreateLobbyScreen extends BaseScreen {
     private void handleCreatedLobby(MonopolyEvent event) {
         RespLobbyCreatedEvent e = (RespLobbyCreatedEvent) event;
 
-        EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Client, new ReqConnectToLobbyEvent(e.getIp()));
+        EventDistributor.send(Endpoint.CreateLobbyScreen, Endpoint.Client,
+                new ReqConnectToLobbyEvent(e.getIp(), e.getName()));
     }
 
     private void handleJoinedLobby(MonopolyEvent event) {
