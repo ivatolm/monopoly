@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import com.esotericsoftware.kryonet.Connection;
 
+import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
+
 public class Player implements Serializable {
 
     private String uuid;
@@ -35,6 +37,8 @@ public class Player implements Serializable {
     }
 
     public void dispose() {
+        connection.sendTCP(new ReqDisconnectEvent());
+
         connection.close();
     }
 

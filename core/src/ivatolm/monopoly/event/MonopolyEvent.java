@@ -9,6 +9,7 @@ public abstract class MonopolyEvent implements Serializable {
         GoJoinLobbyScreenEvent,
         GoLobbyScreenEvent,
         GoCreateLobbyScreenEvent,
+        GoMainMenuScreenEvent,
 
         // request
         ReqConnectToLobby,

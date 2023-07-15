@@ -67,6 +67,9 @@ public class Monopoly extends Game implements EventReceiver {
 	public void handleEvents() {
 		MonopolyEvent event = events.pop();
 		switch (event.getType()) {
+			case GoMainMenuScreenEvent:
+				setScreen(mainMenuScreen);
+				break;
 			case GoJoinLobbyScreenEvent:
 				setScreen(joinLobbyScreen);
 				break;

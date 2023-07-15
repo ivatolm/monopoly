@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.navigation.GoMainMenuScreenEvent;
 import ivatolm.monopoly.event.events.net.ReqConnectEvent;
 import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
@@ -57,6 +61,9 @@ public class MonopolyClient implements EventReceiver {
             case ReqConnectToLobby:
                 handleConnectLobby(event);
                 break;
+            case ReqDisconnectEvent:
+                handleDisconnect(event);
+                break;
             default:
                 break;
         }
@@ -72,7 +79,10 @@ public class MonopolyClient implements EventReceiver {
         }
 
         if (client != null) {
-            client.sendTCP(new ReqDisconnectEvent());
+            if (client.isConnected()) {
+                client.sendTCP(new ReqDisconnectEvent());
+            }
+
             client.stop();
 
             try {
@@ -100,11 +110,38 @@ public class MonopolyClient implements EventReceiver {
         EventDistributor.send(Endpoint.Client, e.getSender(), joinedLobbyEvent);
     }
 
+    private void handleDisconnect(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        ReqDisconnectEvent e = (ReqDisconnectEvent) event;
+
+        client.stop();
+        try {
+            client.dispose();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        client = null;
+
+        EventDistributor.send(Endpoint.Client, Endpoint.Game, new GoMainMenuScreenEvent());
+    }
+
     private void setupClient() {
         client = new Client();
         client.start();
 
         MonopolyProtocol.setupKryo(client.getKryo());
+
+        client.addListener(new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof ReqDisconnectEvent) {
+                    ReqDisconnectEvent request = (ReqDisconnectEvent) object;
+                    request.setConnection(connection);
+
+                    EventDistributor.send(Endpoint.Client, Endpoint.Client, request);
+                }
+            }
+        });
     }
 
 }

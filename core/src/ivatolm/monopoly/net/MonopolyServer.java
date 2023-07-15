@@ -86,6 +86,8 @@ public class MonopolyServer implements EventReceiver {
         }
 
         if (server != null) {
+            lobby.dispose();
+
             server.stop();
 
             try {
