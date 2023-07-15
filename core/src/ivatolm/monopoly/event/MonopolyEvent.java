@@ -27,6 +27,7 @@ public abstract class MonopolyEvent implements Serializable {
         // network
         ReqConnectEvent,
         ReqDisconnectEvent,
+        RespConnectEvent
     }
 
     private Type type;
@@ -77,8 +78,13 @@ public abstract class MonopolyEvent implements Serializable {
 
     @Override
     public String toString() {
-        return "ME { type:" + type + ", sender:" + this.sender + ", receiver:" + this.receiver + ", result:" + result
-                + " }";
+        return "ME {" +
+                "type:" + type + ", " +
+                "sender:" + sender + ", " +
+                "receiver:" + receiver + ", " +
+                "result:" + result + ", " +
+                "message:" + errorMsg +
+                "}";
     }
 
 }

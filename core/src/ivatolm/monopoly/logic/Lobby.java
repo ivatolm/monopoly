@@ -6,6 +6,7 @@ import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
+import ivatolm.monopoly.event.events.net.RespConnectEvent;
 
 public class Lobby {
 
@@ -22,8 +23,18 @@ public class Lobby {
     }
 
     public void addPlayer(Player player) {
+        MonopolyEvent response = new RespConnectEvent();
         if (players.size() + 1 > properties.getPlayerCount()) {
+            response.setResult(false);
+            response.setErrorMsg("Lobby is already full");
+
+            player.getConnection().sendTCP(response);
+            player.dispose();
             return;
+        } else {
+            response.setResult(true);
+
+            player.getConnection().sendTCP(response);
         }
 
         players.put(player.getUUID(), player);
@@ -31,7 +42,7 @@ public class Lobby {
         MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
 
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
