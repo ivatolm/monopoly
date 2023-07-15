@@ -56,6 +56,8 @@ public class MonopolyServer implements EventReceiver {
 
     @Override
     public void handleEvents() {
+        checkConnection();
+
         if (events.isEmpty()) {
             return;
         }
@@ -119,6 +121,22 @@ public class MonopolyServer implements EventReceiver {
         ReqDisconnectEvent e = (ReqDisconnectEvent) event;
 
         lobby.removePlayer(e.getConnection());
+    }
+
+    private void checkConnection() {
+        if (server == null) {
+            return;
+        }
+
+        for (Player player : lobby.getPlayerList()) {
+            Connection connection = player.getConnection();
+
+            if (!connection.isConnected()) {
+                ReqDisconnectEvent event = new ReqDisconnectEvent();
+                event.setConnection(connection);
+                EventDistributor.send(Endpoint.Server, Endpoint.Server, event);
+            }
+        }
     }
 
     private void setupServer() {

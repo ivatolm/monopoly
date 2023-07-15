@@ -52,6 +52,8 @@ public class MonopolyClient implements EventReceiver {
 
     @Override
     public void handleEvents() {
+        checkConnection();
+
         if (events.isEmpty()) {
             return;
         }
@@ -80,7 +82,7 @@ public class MonopolyClient implements EventReceiver {
 
         if (client != null) {
             if (client.isConnected()) {
-                client.sendTCP(new ReqDisconnectEvent());
+                // client.sendTCP(new ReqDisconnectEvent());
             }
 
             client.stop();
@@ -124,6 +126,16 @@ public class MonopolyClient implements EventReceiver {
         client = null;
 
         EventDistributor.send(Endpoint.Client, Endpoint.Game, new GoMainMenuScreenEvent());
+    }
+
+    private void checkConnection() {
+        if (client == null) {
+            return;
+        }
+
+        if (!client.isConnected()) {
+            EventDistributor.send(Endpoint.Client, Endpoint.Client, new ReqDisconnectEvent());
+        }
     }
 
     private void setupClient() {
