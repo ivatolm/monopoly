@@ -105,7 +105,7 @@ public class MonopolyServer implements EventReceiver {
 
         setupServer();
 
-        lobby = new Lobby(new GameProperties(2));
+        lobby = new Lobby(new GameProperties(1));
 
         EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen,
                 new RespLobbyCreatedEvent("127.0.0.1", e.getName()));

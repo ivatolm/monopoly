@@ -1,0 +1,152 @@
+cards.png
+size: 900, 760
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Blue
+  rotate: false
+  xy: 0, 0
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Blue_chance
+  rotate: false
+  xy: 150, 0
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: -1
+Chest
+  rotate: false
+  xy: 300, 0
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Electric_company
+  rotate: false
+  xy: 450, 0
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: -1
+Free_parking
+  rotate: false
+  xy: 600, 0
+  size: 190, 190
+  orig: 190, 190
+  offset: 0, 0
+  index: -1
+Go
+  rotate: false
+  xy: 0, 190
+  size: 190, 190
+  orig: 190, 190
+  offset: 0, 0
+  index: -1
+Green
+  rotate: false
+  xy: 190, 190
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Income_tax
+  rotate: false
+  xy: 340, 190
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 1
+Jail
+  rotate: false
+  xy: 490, 190
+  size: 190, 190
+  orig: 190, 190
+  offset: 0, 0
+  index: -1
+Luxury_tax
+  rotate: false
+  xy: 680, 190
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 1
+Orange
+  rotate: false
+  xy: 0, 380
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Orange_chance
+  rotate: false
+  xy: 150, 380
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: -1
+Pink
+  rotate: false
+  xy: 300, 380
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Pink_chance
+  rotate: false
+  xy: 450, 380
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: -1
+Police
+  rotate: false
+  xy: 600, 380
+  size: 190, 190
+  orig: 190, 190
+  offset: 0, 0
+  index: -1
+Red
+  rotate: false
+  xy: 0, 570
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Skyblue
+  rotate: false
+  xy: 150, 570
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3
+Train
+  rotate: false
+  xy: 300, 570
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 4
+Violet
+  rotate: false
+  xy: 450, 570
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 2
+Water_works
+  rotate: false
+  xy: 600, 570
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: -1
+Yellow
+  rotate: false
+  xy: 750, 570
+  size: 150, 190
+  orig: 150, 190
+  offset: 0, 0
+  index: 3

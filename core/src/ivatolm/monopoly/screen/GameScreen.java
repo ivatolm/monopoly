@@ -36,4 +36,11 @@ public class GameScreen extends BaseScreen {
         map.render();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+
+        map.resize(width, height);
+    }
+
 }

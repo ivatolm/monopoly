@@ -13,8 +13,9 @@ public class Map extends ApplicationAdapter {
     private Camera camera;
 
     private SpriteBatch batch;
-    private TextureAtlas middleCardsAtlas;
-    private TextureAtlas cornerCardsAtlas;
+    private TextureAtlas cards;
+    private Array<Sprite> middleCards;
+    private Array<Sprite> cornerCards;
 
     private float mapHeight;
     private float scalingRatio;
@@ -28,13 +29,40 @@ public class Map extends ApplicationAdapter {
     }
 
     private void loadTextures() {
-        middleCardsAtlas = new TextureAtlas("cards.txt");
-        cornerCardsAtlas = new TextureAtlas("cards.txt");
+        middleCards = new Array<>(4);
+        cornerCards = new Array<>(4);
+
+        String[] middleCardsNames = {
+                "Blue", "Luxury_tax", "Blue", "Orange_chance",
+                "Train",
+                "Green", "Chest", "Green", "Green",
+                "Yellow", "Water_works", "Yellow", "Yellow",
+                "Train",
+                "Red", "Red", "Blue_chance", "Red",
+                "Orange", "Orange", "Chest", "Orange",
+                "Train",
+                "Pink", "Pink", "Electric_company", "Pink",
+                "Skyblue", "Skyblue", "Pink_chance", "Skyblue",
+                "Train",
+                "Income_tax", "Violet", "Chest", "Violet"
+        };
+        String[] cornerCardsNames = { "Go", "Police", "Free_parking", "Jail" };
+
+        cards = new TextureAtlas("cards/cards.txt");
+        for (String name : middleCardsNames) {
+            Sprite sprite = cards.createSprite(name);
+            middleCards.add(sprite);
+        }
+
+        for (String name : cornerCardsNames) {
+            Sprite sprite = cards.createSprite(name);
+            cornerCards.add(sprite);
+        }
     }
 
     private void computeScalingFactor() {
-        float middleWidth = middleCardsAtlas.createSprites().get(0).getWidth();
-        float cornerWidth = cornerCardsAtlas.createSprites().get(0).getHeight();
+        float middleWidth = middleCards.get(0).getWidth();
+        float cornerWidth = cornerCards.get(0).getHeight();
 
         mapHeight = middleWidth * 9 + cornerWidth * 2;
         resize(Gdx.app.getGraphics().getWidth(),
@@ -53,14 +81,14 @@ public class Map extends ApplicationAdapter {
     }
 
     private void renderMiddleCards() {
-        Array<Sprite> sprites = middleCardsAtlas.createSprites();
+        Array<Sprite> sprites = middleCards;
 
         Sprite template = sprites.get(0);
         float templateWidth = template.getWidth() * scalingRatio;
         float templateHeight = template.getHeight() * scalingRatio;
         for (int row = 0; row < 4; row++) {
             for (int i = 0; i < 9; i++) {
-                Sprite sprite = sprites.get(0);
+                Sprite sprite = sprites.get(row * 9 + i);
                 sprite.setOrigin(0, templateHeight);
                 sprite.setRotation(90 * row);
 
@@ -75,12 +103,12 @@ public class Map extends ApplicationAdapter {
                         y = templateHeight + (i * templateWidth);
                         break;
                     case 2:
-                        x = templateHeight + (templateWidth + (i * templateWidth));
+                        x = templateHeight + 9 * templateWidth - (i * templateWidth);
                         y = templateHeight + (templateHeight + 9 * templateWidth);
                         break;
                     case 3:
                         x = 0;
-                        y = templateHeight + (templateWidth + (i * templateWidth));
+                        y = templateHeight + 9 * templateWidth - (i * templateWidth);
                         break;
                 }
 
@@ -95,9 +123,9 @@ public class Map extends ApplicationAdapter {
     }
 
     private void renderCornerCards() {
-        Array<Sprite> sprites = cornerCardsAtlas.createSprites();
+        Array<Sprite> sprites = cornerCards;
 
-        Sprite middleTemplate = middleCardsAtlas.createSprites().get(0);
+        Sprite middleTemplate = middleCards.get(0);
         float middleTemplateWidth = middleTemplate.getWidth() * scalingRatio;
 
         Sprite template = sprites.get(0);
@@ -105,7 +133,7 @@ public class Map extends ApplicationAdapter {
         float templateHeight = template.getHeight() * scalingRatio;
 
         for (int i = 0; i < 4; i++) {
-            Sprite sprite = sprites.get(0);
+            Sprite sprite = sprites.get(i);
             sprite.setOrigin(0, 0);
             sprite.setRotation(0);
 
@@ -146,8 +174,7 @@ public class Map extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        middleCardsAtlas.dispose();
-        cornerCardsAtlas.dispose();
+        cards.dispose();
     }
 
 }
