@@ -9,6 +9,8 @@ import com.kotcrab.vis.ui.widget.VisTable;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.navigation.GoGameScreenEvent;
+import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
 import ivatolm.monopoly.logic.Player;
@@ -56,6 +58,13 @@ public class LobbyScreen extends BaseScreen {
                     ReqUpdateLobbyInfoEvent updateEvent = (ReqUpdateLobbyInfoEvent) object;
 
                     EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, updateEvent);
+                }
+
+                if (object instanceof ReqStartGameEvent) {
+                    ReqStartGameEvent startEvent = (ReqStartGameEvent) object;
+
+                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.Game, new GoGameScreenEvent());
+                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.GameScreen, startEvent);
                 }
             }
         });

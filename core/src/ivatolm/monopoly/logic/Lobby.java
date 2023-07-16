@@ -1,10 +1,12 @@
 package ivatolm.monopoly.logic;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.event.events.net.RespConnectEvent;
 
@@ -37,9 +39,9 @@ public class Lobby {
             player.getConnection().sendTCP(response);
         }
 
+        String uuid = UUID.randomUUID().toString();
+        player.setUUID(uuid);
         players.put(player.getUUID(), player);
-
-        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
 
         try {
             Thread.sleep(1000);
@@ -47,7 +49,21 @@ public class Lobby {
             e.printStackTrace();
         }
 
+        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
         broadcast(updateLobbyInfo);
+
+        if (players.size() == properties.getPlayerCount()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            for (Player p : players.values()) {
+                MonopolyEvent startGameEvent = new ReqStartGameEvent(p.getUUID());
+                p.getConnection().sendTCP(startGameEvent);
+            }
+        }
     }
 
     public void removePlayer(String uuid) {

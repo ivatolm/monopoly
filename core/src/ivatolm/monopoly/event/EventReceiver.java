@@ -6,9 +6,11 @@ public interface EventReceiver {
         Game,
         MainMenuScreen,
         JoinLobbyScreen,
+        CreateLobbyScreen,
         LobbyScreen,
+        GameScreen,
         Client,
-        Server, CreateLobbyScreen
+        Server,
     }
 
     public void receive(MonopolyEvent event);

@@ -1,7 +1,6 @@
 package ivatolm.monopoly.logic;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import com.esotericsoftware.kryonet.Connection;
 
@@ -19,9 +18,13 @@ public class Player implements Serializable {
     }
 
     public Player(Connection connection, String name) {
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = null;
         this.connection = connection;
         this.name = name;
+    }
+
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getUUID() {

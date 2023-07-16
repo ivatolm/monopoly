@@ -14,6 +14,7 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.resource.ResourceManager;
 import ivatolm.monopoly.screen.BaseScreen;
 import ivatolm.monopoly.screen.CreateLobbyScreen;
+import ivatolm.monopoly.screen.GameScreen;
 import ivatolm.monopoly.screen.JoinLobbyScreen;
 import ivatolm.monopoly.screen.LobbyScreen;
 import ivatolm.monopoly.screen.MainMenuScreen;
@@ -26,6 +27,7 @@ public class Monopoly extends Game implements EventReceiver {
 	private JoinLobbyScreen joinLobbyScreen;
 	private CreateLobbyScreen createLobbyScreen;
 	private LobbyScreen lobbyScreen;
+	private GameScreen gameScreen;
 	private MonopolyClient client;
 	private MonopolyServer server;
 
@@ -48,6 +50,9 @@ public class Monopoly extends Game implements EventReceiver {
 
 		lobbyScreen = new LobbyScreen();
 		EventDistributor.register(Endpoint.LobbyScreen, lobbyScreen);
+
+		gameScreen = new GameScreen();
+		EventDistributor.register(Endpoint.GameScreen, gameScreen);
 
 		client = new MonopolyClient();
 		EventDistributor.register(Endpoint.Client, client);
@@ -73,11 +78,14 @@ public class Monopoly extends Game implements EventReceiver {
 			case GoJoinLobbyScreenEvent:
 				setScreen(joinLobbyScreen);
 				break;
+			case GoCreateLobbyScreenEvent:
+				setScreen(createLobbyScreen);
+				break;
 			case GoLobbyScreenEvent:
 				setScreen(lobbyScreen);
 				break;
-			case GoCreateLobbyScreenEvent:
-				setScreen(createLobbyScreen);
+			case GoGameScreenEvent:
+				setScreen(gameScreen);
 				break;
 			default:
 				break;
@@ -99,6 +107,7 @@ public class Monopoly extends Game implements EventReceiver {
 		joinLobbyScreen.dispose();
 		createLobbyScreen.dispose();
 		lobbyScreen.dispose();
+		gameScreen.dispose();
 
 		client.dispose();
 		server.dispose();

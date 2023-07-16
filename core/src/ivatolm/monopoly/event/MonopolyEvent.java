@@ -10,6 +10,7 @@ public abstract class MonopolyEvent implements Serializable {
         GoLobbyScreenEvent,
         GoCreateLobbyScreenEvent,
         GoMainMenuScreenEvent,
+        GoGameScreenEvent,
 
         // request
         ReqConnectToLobby,
@@ -27,7 +28,8 @@ public abstract class MonopolyEvent implements Serializable {
         // network
         ReqConnectEvent,
         ReqDisconnectEvent,
-        RespConnectEvent
+        ReqStartGameEvent,
+        RespConnectEvent,
     }
 
     private Type type;
