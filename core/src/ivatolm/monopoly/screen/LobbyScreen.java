@@ -2,6 +2,7 @@ package ivatolm.monopoly.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.kotcrab.vis.ui.widget.VisLabel;
@@ -19,12 +20,47 @@ public class LobbyScreen extends BaseScreen {
 
     private VisTable players;
 
+    private Client client;
+    private Listener listener;
+
+    public LobbyScreen() {
+        super();
+
+        listener = new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof ReqUpdateLobbyInfoEvent) {
+                    ReqUpdateLobbyInfoEvent updateEvent = (ReqUpdateLobbyInfoEvent) object;
+
+                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, updateEvent);
+                }
+
+                if (object instanceof ReqStartGameEvent) {
+                    ReqStartGameEvent startEvent = (ReqStartGameEvent) object;
+
+                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, startEvent);
+                }
+            }
+        };
+    }
+
     protected void generateUI() {
         players = new VisTable(true);
 
         root.add(players);
 
         stage.addActor(root);
+    }
+
+    @Override
+    public void render(float delta) {
+        ScreenUtils.clear(Color.BLACK);
+
+        super.render(delta);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 
     @Override
@@ -37,37 +73,20 @@ public class LobbyScreen extends BaseScreen {
             case ReqUpdateLobbyInfoEvent:
                 handleUpdateLobbyInfo(event);
                 break;
+            case ReqStartGameEvent:
+                handleStartGameEvent(event);
+                break;
             default:
                 break;
         }
     }
 
-    @Override
-    public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK);
-
-        super.render(delta);
-    }
-
     private void handleInitClient(MonopolyEvent event) {
         ReqInitClientEvent e = (ReqInitClientEvent) event;
 
-        e.getClient().addListener(new Listener() {
-            public void received(Connection connection, Object object) {
-                if (object instanceof ReqUpdateLobbyInfoEvent) {
-                    ReqUpdateLobbyInfoEvent updateEvent = (ReqUpdateLobbyInfoEvent) object;
+        client = e.getClient();
 
-                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, updateEvent);
-                }
-
-                if (object instanceof ReqStartGameEvent) {
-                    ReqStartGameEvent startEvent = (ReqStartGameEvent) object;
-
-                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.Game, new GoGameScreenEvent());
-                    EventDistributor.send(Endpoint.LobbyScreen, Endpoint.GameScreen, startEvent);
-                }
-            }
-        });
+        client.addListener(listener);
     }
 
     private void handleUpdateLobbyInfo(MonopolyEvent event) {
@@ -84,9 +103,14 @@ public class LobbyScreen extends BaseScreen {
         }
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
+    private void handleStartGameEvent(MonopolyEvent event) {
+        ReqStartGameEvent e = (ReqStartGameEvent) event;
+        e.getPlayer().setConnection(client);
+
+        client.removeListener(listener);
+
+        EventDistributor.send(Endpoint.LobbyScreen, Endpoint.Game, new GoGameScreenEvent());
+        EventDistributor.send(Endpoint.LobbyScreen, Endpoint.GameScreen, e);
     }
 
 }

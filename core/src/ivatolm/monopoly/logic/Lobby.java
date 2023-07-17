@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.event.events.net.RespConnectEvent;
 
@@ -18,10 +17,14 @@ public class Lobby {
     private HashMap<String, Player> players;
 
     public Lobby(GameProperties properties) {
-        this.game = new Game(properties);
         this.properties = properties;
 
-        players = new HashMap<>();
+        this.players = new HashMap<>();
+
+        this.game = new Game(properties, players);
+        this.game.start();
+
+        this.game.setWorking(false);
     }
 
     public void addPlayer(Player player) {
@@ -59,10 +62,7 @@ public class Lobby {
                 e.printStackTrace();
             }
 
-            for (Player p : players.values()) {
-                MonopolyEvent startGameEvent = new ReqStartGameEvent(p.getUUID());
-                p.getConnection().sendTCP(startGameEvent);
-            }
+            game.setWorking(true);
         }
     }
 
@@ -74,6 +74,8 @@ public class Lobby {
     }
 
     public void removePlayer(Connection connection) {
+        this.game.setWorking(false);
+
         for (Player player : players.values()) {
             if (player.getConnection() == connection) {
                 players.remove(player.getUUID());
@@ -98,6 +100,13 @@ public class Lobby {
     public void dispose() {
         for (Player player : players.values()) {
             player.dispose();
+        }
+
+        game.dispose();
+        try {
+            game.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

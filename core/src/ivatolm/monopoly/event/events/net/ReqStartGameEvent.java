@@ -1,23 +1,24 @@
 package ivatolm.monopoly.event.events.net;
 
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.logic.Player;
 
 public class ReqStartGameEvent extends MonopolyEvent {
 
-    private String uuid;
+    private Player player;
 
     public ReqStartGameEvent() {
         super(Type.ReqStartGameEvent);
     }
 
-    public ReqStartGameEvent(String uuid) {
+    public ReqStartGameEvent(Player player) {
         super(Type.ReqStartGameEvent);
 
-        this.uuid = uuid;
+        this.player = player;
     }
 
-    public String getUUID() {
-        return uuid;
+    public Player getPlayer() {
+        return player;
     }
 
 }

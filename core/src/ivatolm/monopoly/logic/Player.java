@@ -27,6 +27,10 @@ public class Player implements Serializable {
         this.uuid = uuid;
     }
 
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
     public String getUUID() {
         return uuid;
     }
