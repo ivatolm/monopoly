@@ -6,9 +6,14 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.kotcrab.vis.ui.widget.VisTable;
 
 public class Map extends ApplicationAdapter {
+
+    private Stage stage;
+    private VisTable root;
 
     private Camera camera;
 
@@ -21,6 +26,10 @@ public class Map extends ApplicationAdapter {
     private float scalingRatio;
 
     public Map(Camera camera) {
+        this.stage = new Stage();
+        this.root = new VisTable(true);
+        stage.addActor(root);
+
         this.camera = camera;
 
         batch = new SpriteBatch();
@@ -29,10 +38,7 @@ public class Map extends ApplicationAdapter {
     }
 
     private void loadTextures() {
-        middleCards = new Array<>(4);
-        cornerCards = new Array<>(4);
-
-        String[] middleCardsNames = {
+        final String[] middleCardsNames = {
                 "Blue", "Luxury_tax", "Blue", "Orange_chance",
                 "Train",
                 "Green", "Chest", "Green", "Green",
@@ -46,7 +52,10 @@ public class Map extends ApplicationAdapter {
                 "Train",
                 "Income_tax", "Violet", "Chest", "Violet"
         };
-        String[] cornerCardsNames = { "Go", "Police", "Free_parking", "Jail" };
+        final String[] cornerCardsNames = { "Go", "Police", "Free_parking", "Jail" };
+
+        middleCards = new Array<>(middleCardsNames.length);
+        cornerCards = new Array<>(cornerCardsNames.length);
 
         cards = new TextureAtlas("cards/cards.txt");
         for (String name : middleCardsNames) {
