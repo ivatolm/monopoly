@@ -5,38 +5,32 @@ import java.io.Serializable;
 import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Player implements Serializable {
 
-    private String uuid;
+    @Getter
+    @Setter
+    private String id;
+    @Getter
+    @Setter
     private transient Connection connection;
 
     private String name;
+
+    @Getter
+    @Setter
+    private int position;
 
     public Player() {
 
     }
 
     public Player(Connection connection, String name) {
-        this.uuid = null;
+        this.id = null;
         this.connection = connection;
         this.name = name;
-    }
-
-    public void setUUID(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public String getUUID() {
-        return uuid;
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     public String getName() {

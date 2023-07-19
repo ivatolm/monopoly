@@ -6,10 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
-
-enum GameState {
-    Start,
-}
+import ivatolm.monopoly.event.events.net.ReqUpdateGameStateEvent;
 
 public class Game extends Thread {
 
@@ -17,24 +14,21 @@ public class Game extends Thread {
     private volatile boolean working;
     private Lock lock;
 
-    private GameProperties properties;
-
     private HashMap<String, Player> players;
+
     private GameState state;
 
     public Game(GameProperties properties, HashMap<String, Player> players) {
-        this.properties = properties;
         this.players = players;
+        this.state = new GameState(properties, players, GameState.StateType.Start);
 
         this.running = true;
         this.working = false;
         this.lock = new ReentrantLock();
-
-        this.state = GameState.Start;
     }
 
     public GameProperties getProperties() {
-        return properties;
+        return state.getGameProperties();
     }
 
     public void setWorking(boolean working) {
@@ -50,26 +44,34 @@ public class Game extends Thread {
     @Override
     public void run() {
         while (running) {
-            if (!working) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            if (!working) {
                 continue;
             }
 
             lock.lock();
+            state.update();
             update();
             lock.unlock();
         }
     }
 
     private void update() {
-        switch (state) {
+        switch (state.getStateType()) {
             case Start:
                 handleStartState();
+                break;
+
+            case TurnStart:
+                handleTurnStartState();
+                break;
+
+            case TurnEnd:
                 break;
 
             default:
@@ -82,6 +84,27 @@ public class Game extends Thread {
             MonopolyEvent startGameEvent = new ReqStartGameEvent(p);
             p.getConnection().sendTCP(startGameEvent);
         }
+
+        state.setStateType(GameState.StateType.TurnStart);
+    }
+
+    private void handleTurnStartState() {
+        for (Player p : players.values()) {
+            MonopolyEvent updateGameStateEvent = new ReqUpdateGameStateEvent(state);
+            p.getConnection().sendTCP(updateGameStateEvent);
+        }
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        for (Player p : players.values()) {
+            p.setPosition((p.getPosition() + 1) % 40);
+        }
+
+        // state.setStateType(GameState.StateType.TurnEnd);
     }
 
 }

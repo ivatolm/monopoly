@@ -1,14 +1,22 @@
 package ivatolm.monopoly.map;
 
+import java.util.Collection;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.VisTable;
+
+import ivatolm.monopoly.logic.Player;
 
 public class Map extends ApplicationAdapter {
 
@@ -18,9 +26,13 @@ public class Map extends ApplicationAdapter {
     private Camera camera;
 
     private SpriteBatch batch;
+
     private TextureAtlas cards;
     private Array<Sprite> middleCards;
     private Array<Sprite> cornerCards;
+    private Array<Sprite> allCards;
+
+    private Texture playerIconTexture;
 
     private float mapHeight;
     private float scalingRatio;
@@ -33,26 +45,50 @@ public class Map extends ApplicationAdapter {
         this.camera = camera;
 
         batch = new SpriteBatch();
+
         loadTextures();
         computeScalingFactor();
+        generatePlayerIcon();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        scalingRatio = height / mapHeight;
+
+        if (playerIconTexture != null) {
+            playerIconTexture.dispose();
+        }
+
+        generatePlayerIcon();
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        cards.dispose();
+
+        playerIconTexture.dispose();
     }
 
     private void loadTextures() {
         final String[] middleCardsNames = {
-                "Blue", "Luxury_tax", "Blue", "Orange_chance",
+                "Violet", "Chest", "Violet", "Income_tax",
                 "Train",
-                "Green", "Chest", "Green", "Green",
-                "Yellow", "Water_works", "Yellow", "Yellow",
+                "Skyblue", "Pink_chance", "Skyblue", "Skyblue",
+
+                "Pink", "Electric_company", "Pink", "Pink",
                 "Train",
-                "Red", "Red", "Blue_chance", "Red",
-                "Orange", "Orange", "Chest", "Orange",
+                "Orange", "Chest", "Orange", "Orange",
+
+                "Red", "Blue_chance", "Red", "Red",
                 "Train",
-                "Pink", "Pink", "Electric_company", "Pink",
-                "Skyblue", "Skyblue", "Pink_chance", "Skyblue",
+                "Yellow", "Yellow", "Water_works", "Yellow",
+
+                "Green", "Green", "Chest", "Green",
                 "Train",
-                "Income_tax", "Violet", "Chest", "Violet"
+                "Orange_chance", "Blue", "Luxury_tax", "Blue"
         };
-        final String[] cornerCardsNames = { "Go", "Police", "Free_parking", "Jail" };
+        final String[] cornerCardsNames = { "Go", "Jail", "Free_parking", "Police" };
 
         middleCards = new Array<>(middleCardsNames.length);
         cornerCards = new Array<>(cornerCardsNames.length);
@@ -67,6 +103,25 @@ public class Map extends ApplicationAdapter {
             Sprite sprite = cards.createSprite(name);
             cornerCards.add(sprite);
         }
+
+        allCards = new Array<>(middleCardsNames.length + cornerCardsNames.length);
+        for (int row = 0; row < 4; row++) {
+            allCards.add(cornerCards.get(row));
+            for (int i = 0; i < 9; i++) {
+                allCards.add(middleCards.get(row * 9 + i));
+            }
+        }
+    }
+
+    private void generatePlayerIcon() {
+        final int ICON_SIZE = (int) (50 * scalingRatio);
+
+        Pixmap pixmap = new Pixmap(ICON_SIZE, ICON_SIZE, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.RED);
+        pixmap.fillCircle(ICON_SIZE / 2, ICON_SIZE / 2, ICON_SIZE / 2);
+        playerIconTexture = new Texture(pixmap, true);
+
+        pixmap.dispose();
     }
 
     private void computeScalingFactor() {
@@ -78,13 +133,13 @@ public class Map extends ApplicationAdapter {
                 Gdx.app.getGraphics().getHeight());
     }
 
-    @Override
-    public void render() {
+    public void render(Collection<Player> players) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         renderMiddleCards();
         renderCornerCards();
+        renderPlayers(players);
 
         batch.end();
     }
@@ -98,32 +153,33 @@ public class Map extends ApplicationAdapter {
         for (int row = 0; row < 4; row++) {
             for (int i = 0; i < 9; i++) {
                 Sprite sprite = sprites.get(row * 9 + i);
-                sprite.setOrigin(0, templateHeight);
-                sprite.setRotation(90 * row);
 
                 float x = 0, y = 0;
                 switch (row) {
                     case 0:
-                        x = templateHeight + (i * templateWidth);
-                        y = 0;
+                        x = 0;
+                        y = templateHeight + (templateWidth + i * templateWidth);
                         break;
                     case 1:
-                        x = templateHeight + (templateHeight + 9 * templateWidth);
-                        y = templateHeight + (i * templateWidth);
-                        break;
-                    case 2:
-                        x = templateHeight + 9 * templateWidth - (i * templateWidth);
+                        x = templateHeight + (templateWidth + i * templateWidth);
                         y = templateHeight + (templateHeight + 9 * templateWidth);
                         break;
+                    case 2:
+                        x = templateHeight + (templateHeight + 9 * templateWidth);
+                        y = templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
+                        break;
                     case 3:
-                        x = 0;
-                        y = templateHeight + 9 * templateWidth - (i * templateWidth);
+                        x = templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
+                        y = 0;
                         break;
                 }
 
                 sprite.setPosition(x, y);
 
+                sprite.setOrigin(0, templateHeight);
+                sprite.setRotation(270 - 90 * row);
                 sprite.setOrigin(0, 0);
+
                 sprite.setScale(scalingRatio);
 
                 sprite.draw(batch);
@@ -138,13 +194,11 @@ public class Map extends ApplicationAdapter {
         float middleTemplateWidth = middleTemplate.getWidth() * scalingRatio;
 
         Sprite template = sprites.get(0);
-        float templateWidth = template.getHeight() * scalingRatio;
+        float templateWidth = template.getWidth() * scalingRatio;
         float templateHeight = template.getHeight() * scalingRatio;
 
         for (int i = 0; i < 4; i++) {
             Sprite sprite = sprites.get(i);
-            sprite.setOrigin(0, 0);
-            sprite.setRotation(0);
 
             float x = 0, y = 0;
             switch (i) {
@@ -153,21 +207,24 @@ public class Map extends ApplicationAdapter {
                     y = 0;
                     break;
                 case 1:
-                    x = templateWidth + middleTemplateWidth * 9;
-                    y = 0;
+                    x = 0;
+                    y = templateHeight + middleTemplateWidth * 9;
+
                     break;
                 case 2:
                     x = templateWidth + middleTemplateWidth * 9;
                     y = templateHeight + middleTemplateWidth * 9;
                     break;
                 case 3:
-                    x = 0;
-                    y = templateHeight + middleTemplateWidth * 9;
+                    x = templateWidth + middleTemplateWidth * 9;
+                    y = 0;
                     break;
             }
 
             sprite.setPosition(x, y);
 
+            sprite.setOrigin(0, 0);
+            sprite.setRotation(0);
             sprite.setOrigin(0, 0);
             sprite.setScale(scalingRatio);
 
@@ -175,15 +232,20 @@ public class Map extends ApplicationAdapter {
         }
     }
 
-    @Override
-    public void resize(int width, int height) {
-        scalingRatio = height / mapHeight;
-    }
+    private void renderPlayers(Collection<Player> players) {
+        for (Player player : players) {
+            int position = player.getPosition();
+            Sprite card = allCards.get(position);
 
-    @Override
-    public void dispose() {
-        batch.dispose();
-        cards.dispose();
+            Rectangle bounds = card.getBoundingRectangle();
+
+            float centerX = bounds.x + bounds.width / 2;
+            float centerY = bounds.y + bounds.height / 2;
+
+            batch.draw(playerIconTexture,
+                    centerX - playerIconTexture.getWidth() / 2,
+                    centerY - playerIconTexture.getHeight() / 2);
+        }
     }
 
 }

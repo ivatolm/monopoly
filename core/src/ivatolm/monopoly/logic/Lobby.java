@@ -43,8 +43,8 @@ public class Lobby {
         }
 
         String uuid = UUID.randomUUID().toString();
-        player.setUUID(uuid);
-        players.put(player.getUUID(), player);
+        player.setId(uuid);
+        players.put(player.getId(), player);
 
         try {
             Thread.sleep(1000);
@@ -78,7 +78,7 @@ public class Lobby {
 
         for (Player player : players.values()) {
             if (player.getConnection() == connection) {
-                players.remove(player.getUUID());
+                players.remove(player.getId());
                 break;
             }
         }
