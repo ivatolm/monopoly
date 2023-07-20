@@ -8,6 +8,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
 import ivatolm.monopoly.component.Constraints;
+import ivatolm.monopoly.component.Info;
 import ivatolm.monopoly.component.Map;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
@@ -19,6 +20,7 @@ import ivatolm.monopoly.logic.Player;
 public class GameScreen extends BaseScreen {
 
     private Map map;
+    private Info info;
 
     private Player player;
     private Listener listener;
@@ -30,6 +32,9 @@ public class GameScreen extends BaseScreen {
 
         Constraints mapConstraints = new Constraints();
         map = new Map(mapConstraints, stage.getCamera());
+
+        Constraints infoConstraints = new Constraints();
+        info = new Info(infoConstraints);
 
         listener = new Listener() {
             public void received(Connection connection, Object object) {
@@ -54,6 +59,7 @@ public class GameScreen extends BaseScreen {
         if (gameState != null) {
             Collection<Player> players = gameState.getPlayers().values();
             map.render(players);
+            info.render(delta);
         }
 
         super.render(delta);
@@ -68,6 +74,13 @@ public class GameScreen extends BaseScreen {
         mapConstraints.setHeight(height);
         map.setConstraints(mapConstraints);
 
+        Constraints infoConstraints = info.getConstraints();
+        infoConstraints.setX(height);
+        infoConstraints.setWidth(width - height);
+        infoConstraints.setHeight(height);
+        info.setConstraints(infoConstraints);
+
+        info.resize(width, height);
         map.resize(width, height);
     }
 
@@ -99,6 +112,7 @@ public class GameScreen extends BaseScreen {
         ReqUpdateGameStateEvent e = (ReqUpdateGameStateEvent) event;
 
         gameState = e.getGameState();
+        info.updatePlayersInfo(gameState.getPlayers().values());
 
         System.out.println("Game state was updated");
     }

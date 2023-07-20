@@ -32,4 +32,9 @@ public class Constraints {
         this.height = height;
     }
 
+    @Override
+    public String toString() {
+        return "(" + "x: " + x + ", " + "y: " + y + ", " + "w: " + width + ", " + "h: " + height + ")";
+    }
+
 }
