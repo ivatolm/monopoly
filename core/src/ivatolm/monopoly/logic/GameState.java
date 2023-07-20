@@ -17,11 +17,11 @@ public class GameState {
     private String[] turnOrder;
     private int turnPtr;
 
-    GameState() {
+    public GameState() {
 
     }
 
-    GameState(GameProperties gameProperties,
+    public GameState(GameProperties gameProperties,
             HashMap<String, Player> players,
             StateType startStateType) {
         this.gameProperties = gameProperties;
