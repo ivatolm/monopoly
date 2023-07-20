@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
+import ivatolm.monopoly.component.Constraints;
 import ivatolm.monopoly.component.Map;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
@@ -27,7 +28,8 @@ public class GameScreen extends BaseScreen {
     public GameScreen() {
         super();
 
-        map = new Map(stage.getCamera());
+        Constraints mapConstraints = new Constraints();
+        map = new Map(mapConstraints, stage.getCamera());
 
         listener = new Listener() {
             public void received(Connection connection, Object object) {
@@ -60,6 +62,11 @@ public class GameScreen extends BaseScreen {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
+
+        Constraints mapConstraints = map.getConstraints();
+        mapConstraints.setWidth(height);
+        mapConstraints.setHeight(height);
+        map.setConstraints(mapConstraints);
 
         map.resize(width, height);
     }

@@ -17,12 +17,17 @@ import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.VisTable;
 
 import ivatolm.monopoly.logic.Player;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Map extends ApplicationAdapter {
 
     private Stage stage;
     private VisTable root;
 
+    @Getter
+    @Setter
+    private Constraints constraints;
     private Camera camera;
 
     private SpriteBatch batch;
@@ -37,11 +42,12 @@ public class Map extends ApplicationAdapter {
     private float mapHeight;
     private float scalingRatio;
 
-    public Map(Camera camera) {
+    public Map(Constraints constraints, Camera camera) {
         this.stage = new Stage();
         this.root = new VisTable(true);
         stage.addActor(root);
 
+        this.constraints = constraints;
         this.camera = camera;
 
         batch = new SpriteBatch();
@@ -154,23 +160,23 @@ public class Map extends ApplicationAdapter {
             for (int i = 0; i < 9; i++) {
                 Sprite sprite = sprites.get(row * 9 + i);
 
-                float x = 0, y = 0;
+                float x = constraints.getX(), y = constraints.getY();
                 switch (row) {
                     case 0:
-                        x = 0;
-                        y = templateHeight + (templateWidth + i * templateWidth);
+                        x += 0;
+                        y += templateHeight + (templateWidth + i * templateWidth);
                         break;
                     case 1:
-                        x = templateHeight + (templateWidth + i * templateWidth);
-                        y = templateHeight + (templateHeight + 9 * templateWidth);
+                        x += templateHeight + (templateWidth + i * templateWidth);
+                        y += templateHeight + (templateHeight + 9 * templateWidth);
                         break;
                     case 2:
-                        x = templateHeight + (templateHeight + 9 * templateWidth);
-                        y = templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
+                        x += templateHeight + (templateHeight + 9 * templateWidth);
+                        y += templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
                         break;
                     case 3:
-                        x = templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
-                        y = 0;
+                        x += templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
+                        y += 0;
                         break;
                 }
 
@@ -200,24 +206,24 @@ public class Map extends ApplicationAdapter {
         for (int i = 0; i < 4; i++) {
             Sprite sprite = sprites.get(i);
 
-            float x = 0, y = 0;
+            float x = constraints.getX(), y = constraints.getY();
             switch (i) {
                 case 0:
-                    x = 0;
-                    y = 0;
+                    x += 0;
+                    y += 0;
                     break;
                 case 1:
-                    x = 0;
-                    y = templateHeight + middleTemplateWidth * 9;
+                    x += 0;
+                    y += templateHeight + middleTemplateWidth * 9;
 
                     break;
                 case 2:
-                    x = templateWidth + middleTemplateWidth * 9;
-                    y = templateHeight + middleTemplateWidth * 9;
+                    x += templateWidth + middleTemplateWidth * 9;
+                    y += templateHeight + middleTemplateWidth * 9;
                     break;
                 case 3:
-                    x = templateWidth + middleTemplateWidth * 9;
-                    y = 0;
+                    x += templateWidth + middleTemplateWidth * 9;
+                    y += 0;
                     break;
             }
 
