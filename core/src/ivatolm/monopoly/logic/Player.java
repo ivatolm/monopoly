@@ -17,11 +17,16 @@ public class Player implements Serializable {
     @Setter
     private transient Connection connection;
 
+    @Getter
     private String name;
 
     @Getter
     @Setter
     private int position;
+
+    @Getter
+    @Setter
+    private int money;
 
     public Player() {
 
@@ -31,10 +36,6 @@ public class Player implements Serializable {
         this.id = null;
         this.connection = connection;
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void dispose() {

@@ -90,21 +90,16 @@ public class Game extends Thread {
 
     private void handleTurnStartState() {
         for (Player p : players.values()) {
+            p.setPosition(0);
+            p.setMoney(200);
+        }
+
+        for (Player p : players.values()) {
             MonopolyEvent updateGameStateEvent = new ReqUpdateGameStateEvent(state);
             p.getConnection().sendTCP(updateGameStateEvent);
         }
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        for (Player p : players.values()) {
-            p.setPosition((p.getPosition() + 1) % 40);
-        }
-
-        // state.setStateType(GameState.StateType.TurnEnd);
+        state.setStateType(GameState.StateType.TurnEnd);
     }
 
 }

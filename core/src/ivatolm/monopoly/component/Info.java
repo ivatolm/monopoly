@@ -35,12 +35,21 @@ public class Info extends ApplicationAdapter {
     public void updatePlayersInfo(Collection<Player> players) {
         root.clear();
 
+        root.add(new VisLabel("Players info:"));
+        root.row();
+        root.add(new VisLabel("Name"));
+        root.add(new VisLabel("Money"));
+        root.row();
+
         for (Player player : players) {
             String name = player.getName();
+            String money = String.valueOf(player.getMoney());
 
-            VisLabel label = new VisLabel(name);
+            VisLabel nameLabel = new VisLabel(name);
+            root.add(nameLabel);
+            VisLabel moneyLabel = new VisLabel(money + "$");
+            root.add(moneyLabel);
 
-            root.add(label);
             root.row();
         }
     }
