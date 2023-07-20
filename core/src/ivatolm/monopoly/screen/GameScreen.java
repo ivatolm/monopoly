@@ -7,13 +7,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
+import ivatolm.monopoly.component.Map;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.ReqUpdateGameStateEvent;
 import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
-import ivatolm.monopoly.map.Map;
 
 public class GameScreen extends BaseScreen {
 

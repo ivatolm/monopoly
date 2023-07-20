@@ -1,4 +1,4 @@
-package ivatolm.monopoly.map;
+package ivatolm.monopoly.component;
 
 import java.util.Collection;
 

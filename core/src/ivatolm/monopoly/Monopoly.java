@@ -11,7 +11,6 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.net.MonopolyClient;
 import ivatolm.monopoly.net.MonopolyServer;
 import ivatolm.monopoly.event.EventDistributor;
-import ivatolm.monopoly.resource.ResourceManager;
 import ivatolm.monopoly.screen.BaseScreen;
 import ivatolm.monopoly.screen.CreateLobbyScreen;
 import ivatolm.monopoly.screen.GameScreen;
@@ -111,8 +110,6 @@ public class Monopoly extends Game implements EventReceiver {
 
 		client.dispose();
 		server.dispose();
-
-		ResourceManager.dispose();
 
 		VisUI.dispose();
 	}
