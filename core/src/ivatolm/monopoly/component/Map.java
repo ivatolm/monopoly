@@ -38,6 +38,7 @@ public class Map extends ApplicationAdapter {
     private Array<Sprite> allCards;
 
     private Array<Texture> playerIconTextures;
+    private Texture thisPlayerIconTexture;
 
     private float mapHeight;
     private float scalingRatio;
@@ -69,6 +70,10 @@ public class Map extends ApplicationAdapter {
             playerIconTextures = null;
         }
 
+        if (thisPlayerIconTexture != null) {
+            thisPlayerIconTexture.dispose();
+        }
+
         generatePlayerIcon();
     }
 
@@ -80,6 +85,8 @@ public class Map extends ApplicationAdapter {
         for (Texture texture : playerIconTextures) {
             texture.dispose();
         }
+
+        thisPlayerIconTexture.dispose();
     }
 
     private void loadTextures() {
@@ -129,7 +136,7 @@ public class Map extends ApplicationAdapter {
         final int ICON_SIZE = (int) (50 * scalingRatio);
 
         Color[] colors = {
-                Color.RED, Color.BLUE, Color.GREEN,
+                Color.MAGENTA, Color.BLUE, Color.GREEN,
                 Color.BROWN, Color.CYAN, Color.YELLOW
         };
 
@@ -143,6 +150,14 @@ public class Map extends ApplicationAdapter {
 
             pixmap.dispose();
         }
+
+        Pixmap pixmap = new Pixmap(ICON_SIZE, ICON_SIZE, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.RED);
+        pixmap.fillCircle(ICON_SIZE / 3, ICON_SIZE / 3, ICON_SIZE / 3);
+
+        thisPlayerIconTexture = new Texture(pixmap, true);
+
+        pixmap.dispose();
     }
 
     private void computeScalingFactor() {
@@ -154,13 +169,13 @@ public class Map extends ApplicationAdapter {
                 Gdx.app.getGraphics().getHeight());
     }
 
-    public void render(Collection<Player> players) {
+    public void render(Collection<Player> players, Player player) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         renderMiddleCards();
         renderCornerCards();
-        renderPlayers(players);
+        renderPlayers(players, player);
 
         batch.end();
     }
@@ -253,10 +268,10 @@ public class Map extends ApplicationAdapter {
         }
     }
 
-    private void renderPlayers(Collection<Player> players) {
+    private void renderPlayers(Collection<Player> players, Player player) {
         int i = 0;
-        for (Player player : players) {
-            int position = player.getPosition();
+        for (Player p : players) {
+            int position = p.getPosition();
             Sprite card = allCards.get(position);
 
             Rectangle bounds = card.getBoundingRectangle();
@@ -264,7 +279,12 @@ public class Map extends ApplicationAdapter {
             float centerX = bounds.x + bounds.width / 2;
             float centerY = bounds.y + bounds.height / 2;
 
-            Texture texture = playerIconTextures.get(i);
+            Texture texture = null;
+            if (player.getId().equals(p.getId())) {
+                texture = thisPlayerIconTexture;
+            } else {
+                texture = playerIconTextures.get(i);
+            }
 
             float shiftVal = texture.getWidth() / 2;
             float shiftDeg = i * (float) (Math.PI / players.size());

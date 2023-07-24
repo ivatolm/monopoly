@@ -65,7 +65,7 @@ public class GameScreen extends BaseScreen {
 
         if (gameState != null) {
             Collection<Player> players = gameState.getPlayers().values();
-            map.render(players);
+            map.render(players, player);
             info.render(delta);
             // control is rendered with GameScreen stage
         }
