@@ -6,8 +6,8 @@ import java.util.UUID;
 import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
-import ivatolm.monopoly.event.events.net.RespConnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
+import ivatolm.monopoly.event.events.net.NetRespConnectEvent;
 
 public class Lobby {
 
@@ -28,7 +28,7 @@ public class Lobby {
     }
 
     public void addPlayer(Player player) {
-        MonopolyEvent response = new RespConnectEvent();
+        MonopolyEvent response = new NetRespConnectEvent();
         if (players.size() + 1 > properties.getPlayerCount()) {
             response.setResult(false);
             response.setErrorMsg("Lobby is already full");
@@ -52,7 +52,7 @@ public class Lobby {
             e.printStackTrace();
         }
 
-        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
+        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
         broadcast(updateLobbyInfo);
 
         if (players.size() == properties.getPlayerCount()) {
@@ -69,7 +69,7 @@ public class Lobby {
     public void removePlayer(String uuid) {
         players.remove(uuid);
 
-        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
+        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
         broadcast(updateLobbyInfo);
     }
 
@@ -83,7 +83,7 @@ public class Lobby {
             }
         }
 
-        MonopolyEvent updateLobbyInfo = new ReqUpdateLobbyInfoEvent(getPlayerList());
+        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
         broadcast(updateLobbyInfo);
     }
 

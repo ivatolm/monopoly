@@ -11,9 +11,9 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoJoinLobbyScreenEvent;
-import ivatolm.monopoly.event.events.net.ReqConnectEvent;
-import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
-import ivatolm.monopoly.event.events.net.RespConnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqConnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqDisconnectEvent;
+import ivatolm.monopoly.event.events.net.NetRespConnectEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespJoinedLobbyEvent;
 
@@ -67,7 +67,7 @@ public class MonopolyClient implements EventReceiver {
             case ReqConnectToLobby:
                 handleConnectLobby(event);
                 break;
-            case ReqDisconnectEvent:
+            case NetReqDisconnectEvent:
                 handleDisconnect(event);
                 break;
             default:
@@ -107,8 +107,8 @@ public class MonopolyClient implements EventReceiver {
         final Endpoint sender = e.getSender();
         Listener listener = new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof RespConnectEvent) {
-                    RespConnectEvent resp = (RespConnectEvent) object;
+                if (object instanceof NetRespConnectEvent) {
+                    NetRespConnectEvent resp = (NetRespConnectEvent) object;
 
                     response = resp;
                     waitingResponse = false;
@@ -121,7 +121,7 @@ public class MonopolyClient implements EventReceiver {
 
         try {
             client.connect(100, e.getIp(), 27841);
-            client.sendTCP(new ReqConnectEvent(e.getName()));
+            client.sendTCP(new NetReqConnectEvent(e.getName()));
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -155,7 +155,7 @@ public class MonopolyClient implements EventReceiver {
 
     private void handleDisconnect(MonopolyEvent event) {
         @SuppressWarnings("unused")
-        ReqDisconnectEvent e = (ReqDisconnectEvent) event;
+        NetReqDisconnectEvent e = (NetReqDisconnectEvent) event;
 
         closeClient();
 
@@ -168,7 +168,7 @@ public class MonopolyClient implements EventReceiver {
         }
 
         if (!client.isConnected()) {
-            EventDistributor.send(Endpoint.Client, Endpoint.Client, new ReqDisconnectEvent());
+            EventDistributor.send(Endpoint.Client, Endpoint.Client, new NetReqDisconnectEvent());
         }
     }
 
@@ -180,8 +180,8 @@ public class MonopolyClient implements EventReceiver {
 
         client.addListener(new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof ReqDisconnectEvent) {
-                    ReqDisconnectEvent request = (ReqDisconnectEvent) object;
+                if (object instanceof NetReqDisconnectEvent) {
+                    NetReqDisconnectEvent request = (NetReqDisconnectEvent) object;
                     request.setConnection(connection);
 
                     EventDistributor.send(Endpoint.Client, Endpoint.Client, request);

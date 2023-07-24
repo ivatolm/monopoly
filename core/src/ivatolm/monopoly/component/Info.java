@@ -1,7 +1,5 @@
 package ivatolm.monopoly.component;
 
-import java.util.Collection;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -9,6 +7,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 
+import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,23 +31,27 @@ public class Info extends ApplicationAdapter {
         stage.addActor(root);
     }
 
-    public void updatePlayersInfo(Collection<Player> players) {
+    public void updatePlayersInfo(GameState gameState) {
         root.clear();
 
         root.add(new VisLabel("Players info:"));
         root.row();
         root.add(new VisLabel("Name"));
         root.add(new VisLabel("Money"));
+        root.add(new VisLabel("Turning"));
         root.row();
 
-        for (Player player : players) {
+        for (Player player : gameState.getPlayers().values()) {
             String name = player.getName();
             String money = String.valueOf(player.getMoney());
+            Boolean turning = gameState.getTurningPlayer().equals(player.getId());
 
             VisLabel nameLabel = new VisLabel(name);
             root.add(nameLabel);
             VisLabel moneyLabel = new VisLabel(money + "$");
             root.add(moneyLabel);
+            VisLabel turningLabel = new VisLabel(turning.toString());
+            root.add(turningLabel);
 
             root.row();
         }

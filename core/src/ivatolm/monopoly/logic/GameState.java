@@ -1,6 +1,7 @@
 package ivatolm.monopoly.logic;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class GameState {
 
@@ -29,18 +30,31 @@ public class GameState {
 
         this.stateType = startStateType;
         this.turnPtr = 0;
+        this.turnOrder = new String[] {};
+    }
 
-        update();
+    public void init() {
+        updateLobbyData();
     }
 
     public void update() {
-        this.turnOrder = players.keySet().toArray(new String[0]);
+        updateLobbyData();
+
+        // Updating position of turning player
+        Random random = new Random();
+        int shift = random.nextInt(13) - 1;
+
+        Player player = players.get(getTurningPlayer());
+        int position = (player.getPosition() + shift) % 40;
+        player.setPosition(position);
+
+        turnPtr = (turnPtr + 1) % turnOrder.length;
     }
 
-    public String nextTurning() {
-        String result = turnOrder[turnPtr];
-        turnPtr = (turnPtr++) % turnOrder.length;
-        return result;
+    public void updateLobbyData() {
+        if (players.size() != this.turnOrder.length) {
+            this.turnOrder = players.keySet().toArray(new String[0]);
+        }
     }
 
     public void setStateType(StateType stateType) {
@@ -61,6 +75,27 @@ public class GameState {
 
     public String[] getTurnOrder() {
         return turnOrder;
+    }
+
+    public String getTurningPlayer() {
+        return turnOrder[turnPtr];
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+
+        result += "GameState {" + "\n";
+
+        for (Player player : players.values()) {
+            result += "  " + player.toString() + "\n";
+        }
+
+        result += "  " + "Turn: " + getTurningPlayer() + "\n";
+
+        result += "}" + "\n";
+
+        return result;
     }
 
 }

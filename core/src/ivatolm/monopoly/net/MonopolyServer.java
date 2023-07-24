@@ -10,8 +10,8 @@ import com.esotericsoftware.kryonet.Server;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.net.ReqConnectEvent;
-import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqConnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqDisconnectEvent;
 import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
 import ivatolm.monopoly.logic.GameProperties;
@@ -67,10 +67,10 @@ public class MonopolyServer implements EventReceiver {
             case ReqCreateLobby:
                 handleCreateLobby(event);
                 break;
-            case ReqConnectEvent:
+            case NetReqConnectEvent:
                 handleConnectEvent(event);
                 break;
-            case ReqDisconnectEvent:
+            case NetReqDisconnectEvent:
                 handleDisconnectEvent(event);
                 break;
             default:
@@ -105,20 +105,20 @@ public class MonopolyServer implements EventReceiver {
 
         setupServer();
 
-        lobby = new Lobby(new GameProperties(1));
+        lobby = new Lobby(new GameProperties(2));
 
         EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen,
                 new RespLobbyCreatedEvent("127.0.0.1", e.getName()));
     }
 
     private void handleConnectEvent(MonopolyEvent event) {
-        ReqConnectEvent e = (ReqConnectEvent) event;
+        NetReqConnectEvent e = (NetReqConnectEvent) event;
 
         lobby.addPlayer(new Player(e.getConnection(), e.getName()));
     }
 
     private void handleDisconnectEvent(MonopolyEvent event) {
-        ReqDisconnectEvent e = (ReqDisconnectEvent) event;
+        NetReqDisconnectEvent e = (NetReqDisconnectEvent) event;
 
         lobby.removePlayer(e.getConnection());
     }
@@ -132,7 +132,7 @@ public class MonopolyServer implements EventReceiver {
             Connection connection = player.getConnection();
 
             if (!connection.isConnected()) {
-                ReqDisconnectEvent event = new ReqDisconnectEvent();
+                NetReqDisconnectEvent event = new NetReqDisconnectEvent();
                 event.setConnection(connection);
                 EventDistributor.send(Endpoint.Server, Endpoint.Server, event);
             }
@@ -153,15 +153,15 @@ public class MonopolyServer implements EventReceiver {
 
         server.addListener(new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof ReqConnectEvent) {
-                    ReqConnectEvent request = (ReqConnectEvent) object;
+                if (object instanceof NetReqConnectEvent) {
+                    NetReqConnectEvent request = (NetReqConnectEvent) object;
                     request.setConnection(connection);
 
                     EventDistributor.send(Endpoint.Server, Endpoint.Server, request);
                 }
 
-                if (object instanceof ReqDisconnectEvent) {
-                    ReqDisconnectEvent request = (ReqDisconnectEvent) object;
+                if (object instanceof NetReqDisconnectEvent) {
+                    NetReqDisconnectEvent request = (NetReqDisconnectEvent) object;
                     request.setConnection(connection);
 
                     EventDistributor.send(Endpoint.Server, Endpoint.Server, request);

@@ -11,8 +11,8 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoGameScreenEvent;
-import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
-import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
+import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
+import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
 import ivatolm.monopoly.logic.Player;
 
@@ -28,14 +28,14 @@ public class LobbyScreen extends BaseScreen {
 
         listener = new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof ReqUpdateLobbyInfoEvent) {
-                    ReqUpdateLobbyInfoEvent updateEvent = (ReqUpdateLobbyInfoEvent) object;
+                if (object instanceof NetReqUpdateLobbyInfoEvent) {
+                    NetReqUpdateLobbyInfoEvent updateEvent = (NetReqUpdateLobbyInfoEvent) object;
 
                     EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, updateEvent);
                 }
 
-                if (object instanceof ReqStartGameEvent) {
-                    ReqStartGameEvent startEvent = (ReqStartGameEvent) object;
+                if (object instanceof NetReqStartGameEvent) {
+                    NetReqStartGameEvent startEvent = (NetReqStartGameEvent) object;
 
                     EventDistributor.send(Endpoint.LobbyScreen, Endpoint.LobbyScreen, startEvent);
                 }
@@ -70,10 +70,10 @@ public class LobbyScreen extends BaseScreen {
             case ReqInitClientEvent:
                 handleInitClient(event);
                 break;
-            case ReqUpdateLobbyInfoEvent:
+            case NetReqUpdateLobbyInfoEvent:
                 handleUpdateLobbyInfo(event);
                 break;
-            case ReqStartGameEvent:
+            case NetReqStartGameEvent:
                 handleStartGameEvent(event);
                 break;
             default:
@@ -90,7 +90,7 @@ public class LobbyScreen extends BaseScreen {
     }
 
     private void handleUpdateLobbyInfo(MonopolyEvent event) {
-        ReqUpdateLobbyInfoEvent e = (ReqUpdateLobbyInfoEvent) event;
+        NetReqUpdateLobbyInfoEvent e = (NetReqUpdateLobbyInfoEvent) event;
 
         Player[] list = e.getPlayerList();
 
@@ -104,7 +104,7 @@ public class LobbyScreen extends BaseScreen {
     }
 
     private void handleStartGameEvent(MonopolyEvent event) {
-        ReqStartGameEvent e = (ReqStartGameEvent) event;
+        NetReqStartGameEvent e = (NetReqStartGameEvent) event;
         e.getPlayer().setConnection(client);
 
         client.removeListener(listener);

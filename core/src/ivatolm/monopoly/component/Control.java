@@ -9,9 +9,9 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
-import ivatolm.monopoly.event.events.game.ReqBuy;
-import ivatolm.monopoly.event.events.game.ReqPledge;
-import ivatolm.monopoly.event.events.game.ReqRollDices;
+import ivatolm.monopoly.event.events.game.ReqBuyEvent;
+import ivatolm.monopoly.event.events.game.ReqPledgeEvent;
+import ivatolm.monopoly.event.events.game.ReqRollDicesEvent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,21 +41,21 @@ public class Control extends ApplicationAdapter {
         rollDicesButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqRollDices());
+                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqRollDicesEvent());
             }
         });
 
         buyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqBuy());
+                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqBuyEvent());
             }
         });
 
         pledgeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqPledge());
+                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqPledgeEvent());
             }
         });
 

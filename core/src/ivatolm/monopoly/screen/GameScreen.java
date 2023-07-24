@@ -12,8 +12,10 @@ import ivatolm.monopoly.component.Info;
 import ivatolm.monopoly.component.Map;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
-import ivatolm.monopoly.event.events.net.ReqUpdateGameStateEvent;
+import ivatolm.monopoly.event.events.game.ReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
+import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
 import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
 
@@ -43,8 +45,8 @@ public class GameScreen extends BaseScreen {
 
         listener = new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof ReqUpdateGameStateEvent) {
-                    ReqUpdateGameStateEvent updateEvent = (ReqUpdateGameStateEvent) object;
+                if (object instanceof NetReqUpdateGameStateEvent) {
+                    NetReqUpdateGameStateEvent updateEvent = (NetReqUpdateGameStateEvent) object;
 
                     EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, updateEvent);
                 }
@@ -104,11 +106,14 @@ public class GameScreen extends BaseScreen {
     public void handleEvents() {
         MonopolyEvent event = events.pop();
         switch (event.getType()) {
-            case ReqStartGameEvent:
+            case NetReqStartGameEvent:
                 handleStartGame(event);
                 break;
-            case ReqUpdateGameStateEvent:
+            case NetReqUpdateGameStateEvent:
                 handleUpdateGameState(event);
+                break;
+            case ReqRollDicesEvent:
+                handleRollDices(event);
                 break;
             default:
                 break;
@@ -116,7 +121,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void handleStartGame(MonopolyEvent event) {
-        ReqStartGameEvent e = (ReqStartGameEvent) event;
+        NetReqStartGameEvent e = (NetReqStartGameEvent) event;
 
         player = e.getPlayer();
         player.getConnection().addListener(listener);
@@ -125,12 +130,19 @@ public class GameScreen extends BaseScreen {
     }
 
     private void handleUpdateGameState(MonopolyEvent event) {
-        ReqUpdateGameStateEvent e = (ReqUpdateGameStateEvent) event;
+        NetReqUpdateGameStateEvent e = (NetReqUpdateGameStateEvent) event;
 
         gameState = e.getGameState();
-        info.updatePlayersInfo(gameState.getPlayers().values());
+        info.updatePlayersInfo(gameState);
 
         System.out.println("Game state was updated");
+    }
+
+    private void handleRollDices(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        ReqRollDicesEvent e = (ReqRollDicesEvent) event;
+
+        player.getConnection().sendTCP(new NetReqRollDicesEvent());
     }
 
 }

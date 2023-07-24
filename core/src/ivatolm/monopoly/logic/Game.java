@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
-import ivatolm.monopoly.event.events.net.ReqUpdateGameStateEvent;
+import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
+import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
 
 public class Game extends Thread {
 
@@ -17,6 +21,10 @@ public class Game extends Thread {
     private HashMap<String, Player> players;
 
     private GameState state;
+
+    private volatile boolean waitingResponse = false;
+
+    private final int START_MONEY_AMOUNT = 200;
 
     public Game(GameProperties properties, HashMap<String, Player> players) {
         this.players = players;
@@ -55,7 +63,6 @@ public class Game extends Thread {
             }
 
             lock.lock();
-            state.update();
             update();
             lock.unlock();
         }
@@ -72,6 +79,7 @@ public class Game extends Thread {
                 break;
 
             case TurnEnd:
+                handleTurnEndState();
                 break;
 
             default:
@@ -81,25 +89,53 @@ public class Game extends Thread {
 
     private void handleStartState() {
         for (Player p : players.values()) {
-            MonopolyEvent startGameEvent = new ReqStartGameEvent(p);
+            MonopolyEvent startGameEvent = new NetReqStartGameEvent(p);
             p.getConnection().sendTCP(startGameEvent);
         }
 
+        state.init();
         state.setStateType(GameState.StateType.TurnStart);
     }
 
     private void handleTurnStartState() {
         for (Player p : players.values()) {
-            p.setPosition(0);
-            p.setMoney(200);
-        }
-
-        for (Player p : players.values()) {
-            MonopolyEvent updateGameStateEvent = new ReqUpdateGameStateEvent(state);
+            MonopolyEvent updateGameStateEvent = new NetReqUpdateGameStateEvent(state);
             p.getConnection().sendTCP(updateGameStateEvent);
         }
 
         state.setStateType(GameState.StateType.TurnEnd);
+    }
+
+    private void handleTurnEndState() {
+        Player player = players.get(state.getTurningPlayer());
+
+        waitingResponse = true;
+
+        Listener listener = new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof NetReqRollDicesEvent) {
+                    @SuppressWarnings("unused")
+                    NetReqRollDicesEvent rollDicesEvent = (NetReqRollDicesEvent) object;
+
+                    waitingResponse = false;
+                    state.update();
+
+                    System.out.println("Updating game state...");
+                }
+            }
+        };
+
+        player.getConnection().addListener(listener);
+        while (waitingResponse) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        player.getConnection().removeListener(listener);
+
+        state.setStateType(GameState.StateType.TurnStart);
     }
 
 }

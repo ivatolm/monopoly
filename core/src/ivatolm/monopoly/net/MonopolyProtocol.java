@@ -5,12 +5,15 @@ import java.util.HashMap;
 import com.esotericsoftware.kryo.Kryo;
 
 import ivatolm.monopoly.event.MonopolyEvent;
-import ivatolm.monopoly.event.events.net.ReqConnectEvent;
-import ivatolm.monopoly.event.events.net.RespConnectEvent;
-import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
-import ivatolm.monopoly.event.events.net.ReqStartGameEvent;
-import ivatolm.monopoly.event.events.net.ReqUpdateGameStateEvent;
-import ivatolm.monopoly.event.events.net.ReqUpdateLobbyInfoEvent;
+import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
+import ivatolm.monopoly.event.events.net.NetReqConnectEvent;
+import ivatolm.monopoly.event.events.net.NetRespConnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqDisconnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
+import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
+import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
+import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.logic.GameProperties;
 import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
@@ -22,17 +25,20 @@ public class MonopolyProtocol {
         kryo.register(MonopolyEvent.Type.class);
         kryo.register(Player.class);
         kryo.register(Player[].class);
-        kryo.register(ReqConnectEvent.class);
-        kryo.register(RespConnectEvent.class);
-        kryo.register(ReqDisconnectEvent.class);
-        kryo.register(ReqUpdateLobbyInfoEvent.class);
-        kryo.register(ReqStartGameEvent.class);
+        kryo.register(NetReqConnectEvent.class);
+        kryo.register(NetRespConnectEvent.class);
+        kryo.register(NetReqDisconnectEvent.class);
+        kryo.register(NetReqUpdateLobbyInfoEvent.class);
+        kryo.register(NetReqStartGameEvent.class);
         kryo.register(GameState.class);
         kryo.register(GameState.StateType.class);
         kryo.register(GameProperties.class);
         kryo.register(HashMap.class);
         kryo.register(String[].class);
-        kryo.register(ReqUpdateGameStateEvent.class);
+        kryo.register(NetReqUpdateGameStateEvent.class);
+        kryo.register(NetReqRollDicesEvent.class);
+        kryo.register(NetReqBuyEvent.class);
+        kryo.register(NetReqPledgeEvent.class);
     }
 
 }

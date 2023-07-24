@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esotericsoftware.kryonet.Connection;
 
-import ivatolm.monopoly.event.events.net.ReqDisconnectEvent;
+import ivatolm.monopoly.event.events.net.NetReqDisconnectEvent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,12 +36,26 @@ public class Player implements Serializable {
         this.id = null;
         this.connection = connection;
         this.name = name;
+
+        this.position = 0;
+        this.money = 0;
     }
 
     public void dispose() {
-        connection.sendTCP(new ReqDisconnectEvent());
+        connection.sendTCP(new NetReqDisconnectEvent());
 
         connection.close();
+    }
+
+    @Override
+    public String toString() {
+        return "Player " +
+                "{" +
+                " id: " + id + ", " +
+                " name: " + name + ", " +
+                " position: " + position + ", " +
+                " money: " + money + " " +
+                "}";
     }
 
 }
