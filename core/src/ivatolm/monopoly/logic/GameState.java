@@ -35,6 +35,10 @@ public class GameState {
 
     public void init() {
         updateLobbyData();
+
+        for (Player player : players.values()) {
+            player.setMoney(gameProperties.getStartMoneyAmount());
+        }
     }
 
     public void update() {
@@ -45,8 +49,16 @@ public class GameState {
         int shift = 2 + random.nextInt(10);
 
         Player player = players.get(getTurningPlayer());
-        int position = (player.getPosition() + shift) % 40;
+        int oldPosition = player.getPosition();
+        int position = (oldPosition + shift) % 40;
         player.setPosition(position);
+
+        // Give player money for passing START
+        // Possible BUG: when going to JAIL accidentally adds money
+        if (position < oldPosition) {
+            int money = player.getMoney() + gameProperties.getStartMoneyAmount();
+            player.setMoney(money);
+        }
 
         turnPtr = (turnPtr + 1) % turnOrder.length;
     }

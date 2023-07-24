@@ -24,8 +24,6 @@ public class Game extends Thread {
 
     private volatile boolean waitingResponse = false;
 
-    private final int START_MONEY_AMOUNT = 200;
-
     public Game(GameProperties properties, HashMap<String, Player> players) {
         this.players = players;
         this.state = new GameState(properties, players, GameState.StateType.Start);
