@@ -4,17 +4,17 @@ import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 
-public class ReqConnectEvent extends MonopolyEvent {
+public class NetReqConnectEvent extends MonopolyEvent {
 
     private transient Connection connection;
     private String name;
 
-    public ReqConnectEvent() {
-        super(Type.ReqConnectEvent);
+    public NetReqConnectEvent() {
+        super(Type.NetReqConnectEvent);
     }
 
-    public ReqConnectEvent(String name) {
-        super(Type.ReqConnectEvent);
+    public NetReqConnectEvent(String name) {
+        super(Type.NetReqConnectEvent);
 
         this.name = name;
     }

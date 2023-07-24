@@ -3,16 +3,16 @@ package ivatolm.monopoly.event.events.net;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.logic.Player;
 
-public class ReqStartGameEvent extends MonopolyEvent {
+public class NetReqStartGameEvent extends MonopolyEvent {
 
     private Player player;
 
-    public ReqStartGameEvent() {
-        super(Type.ReqStartGameEvent);
+    public NetReqStartGameEvent() {
+        super(Type.NetReqStartGameEvent);
     }
 
-    public ReqStartGameEvent(Player player) {
-        super(Type.ReqStartGameEvent);
+    public NetReqStartGameEvent(Player player) {
+        super(Type.NetReqStartGameEvent);
 
         this.player = player;
     }

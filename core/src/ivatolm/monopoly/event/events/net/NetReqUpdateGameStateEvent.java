@@ -3,16 +3,16 @@ package ivatolm.monopoly.event.events.net;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.logic.GameState;
 
-public class ReqUpdateGameStateEvent extends MonopolyEvent {
+public class NetReqUpdateGameStateEvent extends MonopolyEvent {
 
     private GameState gameState;
 
-    public ReqUpdateGameStateEvent() {
-        super(Type.ReqUpdateGameStateEvent);
+    public NetReqUpdateGameStateEvent() {
+        super(Type.NetReqUpdateGameStateEvent);
     }
 
-    public ReqUpdateGameStateEvent(GameState gameState) {
-        super(Type.ReqUpdateGameStateEvent);
+    public NetReqUpdateGameStateEvent(GameState gameState) {
+        super(Type.NetReqUpdateGameStateEvent);
 
         this.gameState = gameState;
     }

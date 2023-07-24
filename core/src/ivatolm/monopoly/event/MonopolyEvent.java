@@ -15,7 +15,7 @@ public abstract class MonopolyEvent implements Serializable {
         // request
         ReqConnectToLobby,
         ReqCreateLobby,
-        ReqUpdateLobbyInfoEvent,
+        NetReqUpdateLobbyInfoEvent,
         ReqInitClientEvent,
 
         // response
@@ -26,16 +26,16 @@ public abstract class MonopolyEvent implements Serializable {
         RespClientAccepted,
 
         // network
-        ReqConnectEvent,
-        ReqDisconnectEvent,
-        ReqStartGameEvent,
-        ReqUpdateGameStateEvent,
-        RespConnectEvent,
+        NetReqConnectEvent,
+        NetReqDisconnectEvent,
+        NetReqStartGameEvent,
+        NetReqUpdateGameStateEvent,
+        NetRespConnectEvent,
 
         // game
-        ReqRollDices,
-        ReqBuy,
-        ReqPledge,
+        ReqRollDicesEvent,
+        ReqBuyEvent,
+        ReqPledgeEvent,
     }
 
     private Type type;
