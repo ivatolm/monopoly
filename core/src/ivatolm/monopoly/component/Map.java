@@ -265,9 +265,15 @@ public class Map extends ApplicationAdapter {
             float centerY = bounds.y + bounds.height / 2;
 
             Texture texture = playerIconTextures.get(i);
+
+            float shiftVal = texture.getWidth() / 2;
+            float shiftDeg = i * (float) (Math.PI / players.size());
+            float shiftX = shiftVal * (float) Math.cos(shiftDeg);
+            float shiftY = shiftVal * (float) Math.sin(shiftDeg);
+
             batch.draw(texture,
-                    centerX - texture.getWidth() / 2,
-                    centerY - texture.getHeight() / 2);
+                    centerX - texture.getWidth() / 2 + shiftX,
+                    centerY - texture.getHeight() / 2 + shiftY);
 
             i++;
         }
