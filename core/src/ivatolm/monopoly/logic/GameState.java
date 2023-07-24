@@ -42,7 +42,7 @@ public class GameState {
 
         // Updating position of turning player
         Random random = new Random();
-        int shift = random.nextInt(13) - 1;
+        int shift = 2 + random.nextInt(10);
 
         Player player = players.get(getTurningPlayer());
         int position = (player.getPosition() + shift) % 40;
