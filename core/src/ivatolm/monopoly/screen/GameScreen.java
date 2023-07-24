@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-
 import ivatolm.monopoly.component.Constraints;
+import ivatolm.monopoly.component.Control;
 import ivatolm.monopoly.component.Info;
 import ivatolm.monopoly.component.Map;
 import ivatolm.monopoly.event.EventDistributor;
@@ -21,6 +21,7 @@ public class GameScreen extends BaseScreen {
 
     private Map map;
     private Info info;
+    private Control control;
 
     private Player player;
     private Listener listener;
@@ -35,6 +36,10 @@ public class GameScreen extends BaseScreen {
 
         Constraints infoConstraints = new Constraints();
         info = new Info(infoConstraints);
+
+        Constraints controlConstraints = new Constraints();
+        control = new Control(controlConstraints);
+        stage.addActor(control.getRoot());
 
         listener = new Listener() {
             public void received(Connection connection, Object object) {
@@ -60,6 +65,7 @@ public class GameScreen extends BaseScreen {
             Collection<Player> players = gameState.getPlayers().values();
             map.render(players);
             info.render(delta);
+            // control is rendered with GameScreen stage
         }
 
         super.render(delta);
@@ -69,6 +75,8 @@ public class GameScreen extends BaseScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
 
+        final int CONTROL_SIZE = 50;
+
         Constraints mapConstraints = map.getConstraints();
         mapConstraints.setWidth(height);
         mapConstraints.setHeight(height);
@@ -76,12 +84,20 @@ public class GameScreen extends BaseScreen {
 
         Constraints infoConstraints = info.getConstraints();
         infoConstraints.setX(height);
+        infoConstraints.setY(CONTROL_SIZE);
         infoConstraints.setWidth(width - height);
-        infoConstraints.setHeight(height);
+        infoConstraints.setHeight(height - CONTROL_SIZE);
         info.setConstraints(infoConstraints);
+
+        Constraints controlConstraints = control.getConstraints();
+        controlConstraints.setX(height);
+        controlConstraints.setWidth(width - height);
+        controlConstraints.setHeight(CONTROL_SIZE);
+        control.setConstraints(controlConstraints);
 
         info.resize(width, height);
         map.resize(width, height);
+        control.resize(width, height);
     }
 
     @Override
