@@ -8,6 +8,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
+import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
 import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
@@ -96,10 +98,7 @@ public class Game extends Thread {
     }
 
     private void handleTurnStartState() {
-        for (Player p : players.values()) {
-            MonopolyEvent updateGameStateEvent = new NetReqUpdateGameStateEvent(state);
-            p.getConnection().sendTCP(updateGameStateEvent);
-        }
+        sendGameState();
 
         state.setStateType(GameState.StateType.TurnEnd);
     }
@@ -111,7 +110,21 @@ public class Game extends Thread {
 
         Listener listener = new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof NetReqRollDicesEvent) {
+                if (object instanceof NetReqBuyEvent) {
+                    NetReqBuyEvent buyEvent = (NetReqBuyEvent) object;
+
+                    state.preUpdate(buyEvent);
+                    sendGameState();
+                }
+
+                else if (object instanceof NetReqPledgeEvent) {
+                    NetReqPledgeEvent plegdeEvent = (NetReqPledgeEvent) object;
+
+                    state.preUpdate(plegdeEvent);
+                    sendGameState();
+                }
+
+                else if (object instanceof NetReqRollDicesEvent) {
                     @SuppressWarnings("unused")
                     NetReqRollDicesEvent rollDicesEvent = (NetReqRollDicesEvent) object;
 
@@ -134,6 +147,13 @@ public class Game extends Thread {
         player.getConnection().removeListener(listener);
 
         state.setStateType(GameState.StateType.TurnStart);
+    }
+
+    private void sendGameState() {
+        for (Player p : players.values()) {
+            MonopolyEvent updateGameStateEvent = new NetReqUpdateGameStateEvent(state);
+            p.getConnection().sendTCP(updateGameStateEvent);
+        }
     }
 
 }

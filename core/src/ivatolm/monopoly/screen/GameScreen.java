@@ -12,7 +12,12 @@ import ivatolm.monopoly.component.Info;
 import ivatolm.monopoly.component.Map;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.game.ReqBuyEvent;
+import ivatolm.monopoly.event.events.game.ReqCardSelectedEvent;
+import ivatolm.monopoly.event.events.game.ReqPledgeEvent;
 import ivatolm.monopoly.event.events.game.ReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
+import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
 import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
@@ -27,6 +32,7 @@ public class GameScreen extends BaseScreen {
 
     private Player player;
     private Listener listener;
+    private Integer selectedCard;
 
     private GameState gameState;
 
@@ -115,6 +121,15 @@ public class GameScreen extends BaseScreen {
             case ReqRollDicesEvent:
                 handleRollDices(event);
                 break;
+            case ReqBuyEvent:
+                handleBuyEvent(event);
+                break;
+            case ReqPledgeEvent:
+                handlePledgeEvent(event);
+                break;
+            case ReqCardSelectedEvent:
+                handleCardSelected(event);
+                break;
             default:
                 break;
         }
@@ -143,6 +158,30 @@ public class GameScreen extends BaseScreen {
         ReqRollDicesEvent e = (ReqRollDicesEvent) event;
 
         player.getConnection().sendTCP(new NetReqRollDicesEvent());
+    }
+
+    private void handleBuyEvent(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        ReqBuyEvent e = (ReqBuyEvent) event;
+
+        if (selectedCard != null) {
+            player.getConnection().sendTCP(new NetReqBuyEvent(selectedCard));
+        }
+    }
+
+    private void handlePledgeEvent(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        ReqPledgeEvent e = (ReqPledgeEvent) event;
+
+        if (selectedCard != null) {
+            player.getConnection().sendTCP(new NetReqPledgeEvent(selectedCard));
+        }
+    }
+
+    private void handleCardSelected(MonopolyEvent event) {
+        ReqCardSelectedEvent e = (ReqCardSelectedEvent) event;
+
+        selectedCard = e.getPosition();
     }
 
 }

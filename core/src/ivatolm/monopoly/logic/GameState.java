@@ -3,6 +3,10 @@ package ivatolm.monopoly.logic;
 import java.util.HashMap;
 import java.util.Random;
 
+import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
+import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
+
 public class GameState {
 
     public enum StateType {
@@ -38,6 +42,32 @@ public class GameState {
 
         for (Player player : players.values()) {
             player.setMoney(gameProperties.getStartMoneyAmount());
+        }
+    }
+
+    public void preUpdate(MonopolyEvent event) {
+        Player player = players.get(getTurningPlayer());
+        int playerPosition = player.getPosition();
+        int playerMoney = player.getMoney();
+
+        if (event.getType() == MonopolyEvent.Type.NetReqBuyEvent) {
+            NetReqBuyEvent buyEvent = (NetReqBuyEvent) event;
+
+            int position = buyEvent.getPosition();
+            System.out.println(position + ", " + playerPosition);
+            if (playerPosition == position) {
+                if (playerMoney > 100) {
+                    player.setMoney(playerMoney - 100);
+                }
+            }
+        }
+
+        else if (event.getType() == MonopolyEvent.Type.NetReqPledgeEvent) {
+            NetReqPledgeEvent pledgeEvent = (NetReqPledgeEvent) event;
+
+            @SuppressWarnings("unused")
+            int position = pledgeEvent.getPosition();
+            player.setMoney(playerMoney + 100);
         }
     }
 

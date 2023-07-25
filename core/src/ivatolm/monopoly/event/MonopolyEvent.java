@@ -39,6 +39,7 @@ public abstract class MonopolyEvent implements Serializable {
         ReqRollDicesEvent,
         ReqBuyEvent,
         ReqPledgeEvent,
+        ReqCardSelectedEvent,
     }
 
     private Type type;

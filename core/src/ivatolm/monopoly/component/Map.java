@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -16,6 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.VisTable;
 
+import ivatolm.monopoly.event.EventDistributor;
+import ivatolm.monopoly.event.EventReceiver.Endpoint;
+import ivatolm.monopoly.event.events.game.ReqCardSelectedEvent;
 import ivatolm.monopoly.logic.Player;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +28,8 @@ public class Map extends ApplicationAdapter {
 
     private Stage stage;
     private VisTable root;
+
+    Thread inputThread;
 
     @Getter
     @Setter
@@ -42,6 +48,7 @@ public class Map extends ApplicationAdapter {
 
     private float mapHeight;
     private float scalingRatio;
+    private Sprite selectedCard;
 
     public Map(Constraints constraints, Camera camera) {
         this.stage = new Stage();
@@ -173,6 +180,9 @@ public class Map extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        updateInput();
+        updateSelection();
+
         renderMiddleCards();
         renderCornerCards();
         renderPlayers(players, player);
@@ -245,7 +255,6 @@ public class Map extends ApplicationAdapter {
                 case 1:
                     x += 0;
                     y += templateHeight + middleTemplateWidth * 9;
-
                     break;
                 case 2:
                     x += templateWidth + middleTemplateWidth * 9;
@@ -296,6 +305,66 @@ public class Map extends ApplicationAdapter {
                     centerY - texture.getHeight() / 2 + shiftY);
 
             i++;
+        }
+    }
+
+    private Sprite getHoverCard() {
+        float x = Gdx.input.getX();
+        float y = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+        double minDistance = Float.MAX_VALUE;
+        Sprite closestCard = null;
+        for (Sprite card : allCards) {
+            Rectangle bounds = card.getBoundingRectangle();
+
+            float centerX = bounds.x + bounds.width / 2;
+            float centerY = bounds.y + bounds.height / 2;
+
+            double distance = Math.sqrt(Math.pow(centerX - x, 2) + Math.pow(centerY - y, 2));
+            if (minDistance > distance) {
+                minDistance = distance;
+                closestCard = card;
+            }
+        }
+
+        if (minDistance > 100) {
+            return null;
+        }
+
+        return closestCard;
+    }
+
+    private void updateInput() {
+        Sprite hoverCard = getHoverCard();
+
+        if (hoverCard != null && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
+            selectedCard = hoverCard;
+
+            Integer position = null;
+            for (int i = 0; i < allCards.size; i++) {
+                if (allCards.get(i) == selectedCard) {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position == null) {
+                selectedCard = null;
+                return;
+            }
+
+            EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen,
+                    new ReqCardSelectedEvent(position));
+        }
+    }
+
+    private void updateSelection() {
+        for (Sprite card : allCards) {
+            card.setAlpha(0.75f);
+        }
+
+        if (selectedCard != null) {
+            selectedCard.setAlpha(1.0f);
         }
     }
 
