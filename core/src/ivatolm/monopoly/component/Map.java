@@ -335,6 +335,17 @@ public class Map extends ApplicationAdapter {
     }
 
     private void updateInput() {
+        final int[] nonPropertyPositions = {
+                0,
+                2, 4, 5, 7,
+                10,
+                12, 15, 17,
+                20,
+                22, 25, 28,
+                30,
+                33, 35, 36, 38
+        };
+
         Sprite hoverCard = getHoverCard();
 
         if (hoverCard != null && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
@@ -348,7 +359,15 @@ public class Map extends ApplicationAdapter {
                 }
             }
 
-            if (position == null) {
+            boolean restriced = false;
+            for (int i = 0; i < nonPropertyPositions.length; i++) {
+                if (nonPropertyPositions[i] == position) {
+                    restriced = true;
+                    break;
+                }
+            }
+
+            if (position == null || restriced) {
                 selectedCard = null;
                 return;
             }
