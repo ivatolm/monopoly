@@ -144,18 +144,7 @@ public class GameState {
             String owner = positionProperty.getOwner();
             Player ownerPlayer = players.get(owner);
 
-            while (player.getMoney() < cost) {
-                List<Property> playerProperty = getActivePlayerProperty(player.getId());
-                if (playerProperty.isEmpty()) {
-                    break;
-                }
-
-                int propertyIndex = random.nextInt(playerProperty.size());
-
-                Property propertyForPledge = property.get(propertyIndex);
-                player.setMoney(player.getMoney() + propertyForPledge.getPledgedCost());
-                propertyForPledge.setPledged(true);
-            }
+            tryFindMoney(player, cost);
 
             player.setMoney(player.getMoney() - cost);
             ownerPlayer.setMoney(ownerPlayer.getMoney() + cost);
@@ -164,6 +153,40 @@ public class GameState {
         // Checking for getting into jail
         if (position == 30) {
             player.setPosition(10);
+        }
+
+        // Checking for getting to pay taxes
+        final List<Integer> taxesPositions = Arrays.asList(new Integer[] {
+                4, 38
+        });
+        final int taxesMaxCost = 50;
+
+        if (taxesPositions.contains(position)) {
+            int taxesCost = random.nextInt(taxesMaxCost);
+            tryFindMoney(player, taxesCost);
+            player.setMoney(player.getMoney() - taxesCost);
+        }
+
+        // Checking for getting to redeem benefits
+        final List<Integer> benefitsPositions = Arrays.asList(new Integer[] {
+                2, 17,
+        });
+        final int benefitsMaxCost = 50;
+
+        if (benefitsPositions.contains(position)) {
+            int benefitsCost = random.nextInt(benefitsMaxCost);
+            tryFindMoney(player, benefitsCost);
+            player.setMoney(player.getMoney() + benefitsCost);
+        }
+
+        // Checking for getting any chances
+        final List<Integer> chancesPositions = Arrays.asList(new Integer[] {
+                7, 22, 36
+        });
+
+        if (chancesPositions.contains(position)) {
+            int chancesCost = random.nextInt(benefitsMaxCost + taxesMaxCost) - benefitsMaxCost;
+            player.setMoney(player.getMoney() + chancesCost);
         }
 
         // Checking for game ending
@@ -192,7 +215,7 @@ public class GameState {
     }
 
     private void generateProperty() {
-        List<Integer> nonPropertyPositions = Arrays.asList(new Integer[] {
+        final List<Integer> nonPropertyPositions = Arrays.asList(new Integer[] {
                 0,
                 2, 4, 5, 7,
                 10,
@@ -247,6 +270,23 @@ public class GameState {
         }
 
         return result;
+    }
+
+    private void tryFindMoney(Player player, int cost) {
+        Random random = new Random();
+
+        while (player.getMoney() < cost) {
+            List<Property> playerProperty = getActivePlayerProperty(player.getId());
+            if (playerProperty.isEmpty()) {
+                break;
+            }
+
+            int propertyIndex = random.nextInt(playerProperty.size());
+
+            Property propertyForPledge = playerProperty.get(propertyIndex);
+            player.setMoney(player.getMoney() + propertyForPledge.getPledgedCost());
+            propertyForPledge.setPledged(true);
+        }
     }
 
 }
