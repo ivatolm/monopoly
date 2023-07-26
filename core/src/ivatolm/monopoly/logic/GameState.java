@@ -161,6 +161,11 @@ public class GameState {
             ownerPlayer.setMoney(ownerPlayer.getMoney() + cost);
         }
 
+        // Checking for getting into jail
+        if (position == 30) {
+            player.setPosition(10);
+        }
+
         // Checking for game ending
         int bankruptCount = 0;
         for (Player p : players.values()) {
