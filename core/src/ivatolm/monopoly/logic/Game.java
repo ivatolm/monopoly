@@ -9,6 +9,7 @@ import com.esotericsoftware.kryonet.Listener;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
+import ivatolm.monopoly.event.events.net.NetReqEndGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
 import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
@@ -82,6 +83,10 @@ public class Game extends Thread {
                 handleTurnEndState();
                 break;
 
+            case End:
+                handleEndState();
+                break;
+
             default:
                 break;
         }
@@ -104,7 +109,7 @@ public class Game extends Thread {
     }
 
     private void handleTurnEndState() {
-        Player player = players.get(state.getTurningPlayer());
+        Player player = players.get(state.getTurningPlayerId());
 
         waitingResponse = true;
 
@@ -147,6 +152,15 @@ public class Game extends Thread {
         player.getConnection().removeListener(listener);
 
         state.setStateType(GameState.StateType.TurnStart);
+    }
+
+    private void handleEndState() {
+        System.out.println("Game finished");
+
+        for (Player p : players.values()) {
+            MonopolyEvent endGameEvent = new NetReqEndGameEvent();
+            p.getConnection().sendTCP(endGameEvent);
+        }
     }
 
     private void sendGameState() {

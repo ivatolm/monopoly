@@ -7,6 +7,8 @@ public class Property {
 
     private int[] cost;
 
+    private int[] rent;
+
     @Getter
     @Setter
     private int stage;
@@ -23,8 +25,9 @@ public class Property {
 
     }
 
-    public Property(int[] cost, int stage) {
+    public Property(int[] cost, int[] rent, int stage) {
         this.cost = cost;
+        this.rent = rent;
         this.stage = stage;
         this.pledged = false;
     }
@@ -39,6 +42,10 @@ public class Property {
         }
 
         return cost[stage - 1] / 2;
+    }
+
+    public int getRentCost() {
+        return rent[stage];
     }
 
     public boolean canBuy() {

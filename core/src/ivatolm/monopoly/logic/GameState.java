@@ -2,6 +2,7 @@ package ivatolm.monopoly.logic;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +17,8 @@ public class GameState {
     public enum StateType {
         Start,
         TurnStart,
-        TurnEnd
+        TurnEnd,
+        End
     }
 
     @Getter
@@ -33,6 +35,9 @@ public class GameState {
     private String[] turnOrder;
     private int turnPtr;
 
+    @Getter
+    private boolean gameEnded;
+
     public GameState() {
 
     }
@@ -48,6 +53,8 @@ public class GameState {
         this.stateType = startStateType;
         this.turnPtr = 0;
         this.turnOrder = new String[] {};
+
+        this.gameEnded = false;
     }
 
     public void init() {
@@ -59,7 +66,7 @@ public class GameState {
     }
 
     public void preUpdate(MonopolyEvent event) {
-        Player player = players.get(getTurningPlayer());
+        Player player = players.get(getTurningPlayerId());
         int playerPosition = player.getPosition();
         int playerMoney = player.getMoney();
         String playerId = player.getId();
@@ -116,7 +123,7 @@ public class GameState {
         Random random = new Random();
         int shift = 2 + random.nextInt(10);
 
-        Player player = players.get(getTurningPlayer());
+        Player player = players.get(getTurningPlayerId());
         int oldPosition = player.getPosition();
         int position = (oldPosition + shift) % 40;
         player.setPosition(position);
@@ -128,7 +135,49 @@ public class GameState {
             player.setMoney(money);
         }
 
+        // Charging for rent
+        Property positionProperty = property.get(position);
+        if (positionProperty != null && positionProperty.getOwner() != null
+                && !positionProperty.getOwner().equals(player.getId())) {
+            int cost = positionProperty.getRentCost();
+
+            String owner = positionProperty.getOwner();
+            Player ownerPlayer = players.get(owner);
+
+            while (player.getMoney() < cost) {
+                List<Property> playerProperty = getActivePlayerProperty(player.getId());
+                if (playerProperty.isEmpty()) {
+                    break;
+                }
+
+                int propertyIndex = random.nextInt(playerProperty.size());
+
+                Property propertyForPledge = property.get(propertyIndex);
+                player.setMoney(player.getMoney() + propertyForPledge.getPledgedCost());
+                propertyForPledge.setPledged(true);
+            }
+
+            player.setMoney(player.getMoney() - cost);
+            ownerPlayer.setMoney(ownerPlayer.getMoney() + cost);
+        }
+
+        // Checking for game ending
+        int bankruptCount = 0;
+        for (Player p : players.values()) {
+            if (p.isBankrupt()) {
+                bankruptCount += 1;
+            }
+        }
+
+        if (bankruptCount == turnOrder.length - 1) {
+            gameEnded = true;
+        }
+
+        // Updating turning player
         turnPtr = (turnPtr + 1) % turnOrder.length;
+        while (players.get(getTurningPlayerId()).isBankrupt()) {
+            turnPtr = (turnPtr + 1) % turnOrder.length;
+        }
     }
 
     public void updateLobbyData() {
@@ -155,13 +204,14 @@ public class GameState {
             }
 
             int[] cost = new int[] { 100, 200, 300, 400, 500 };
+            int[] rent = new int[] { 10, 20, 30, 40, 50 };
 
-            Property property = new Property(cost, 0);
+            Property property = new Property(cost, rent, 0);
             this.property.put(i, property);
         }
     }
 
-    public String getTurningPlayer() {
+    public String getTurningPlayerId() {
         return turnOrder[turnPtr];
     }
 
@@ -175,9 +225,21 @@ public class GameState {
             result += "  " + player.toString() + "\n";
         }
 
-        result += "  " + "Turn: " + getTurningPlayer() + "\n";
+        result += "  " + "Turn: " + getTurningPlayerId() + "\n";
 
         result += "}" + "\n";
+
+        return result;
+    }
+
+    private List<Property> getActivePlayerProperty(String playerId) {
+        LinkedList<Property> result = new LinkedList<>();
+
+        for (Property p : property.values()) {
+            if (playerId.equals(p.getOwner()) && !p.isPledged()) {
+                result.add(p);
+            }
+        }
 
         return result;
     }

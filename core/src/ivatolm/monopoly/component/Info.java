@@ -44,7 +44,7 @@ public class Info extends ApplicationAdapter {
         for (Player player : gameState.getPlayers().values()) {
             String name = player.getName();
             String money = String.valueOf(player.getMoney());
-            Boolean turning = gameState.getTurningPlayer().equals(player.getId());
+            Boolean turning = gameState.getTurningPlayerId().equals(player.getId());
 
             VisLabel nameLabel = new VisLabel(name);
             root.add(nameLabel);

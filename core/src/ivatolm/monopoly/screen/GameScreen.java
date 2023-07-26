@@ -15,10 +15,12 @@ import ivatolm.monopoly.event.events.game.ReqCardSelectedEvent;
 import ivatolm.monopoly.event.events.game.ReqPledgeEvent;
 import ivatolm.monopoly.event.events.game.ReqRollDicesEvent;
 import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
+import ivatolm.monopoly.event.events.net.NetReqEndGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
 import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
+import ivatolm.monopoly.event.events.request.ReqEndGame;
 import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
 
@@ -53,6 +55,12 @@ public class GameScreen extends BaseScreen {
                     NetReqUpdateGameStateEvent updateEvent = (NetReqUpdateGameStateEvent) object;
 
                     EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, updateEvent);
+                }
+
+                else if (object instanceof NetReqEndGameEvent) {
+                    NetReqEndGameEvent endGameEvent = (NetReqEndGameEvent) object;
+
+                    EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, endGameEvent);
                 }
             }
         };
@@ -112,6 +120,9 @@ public class GameScreen extends BaseScreen {
             case NetReqStartGameEvent:
                 handleStartGame(event);
                 break;
+            case NetReqEndGameEvent:
+                handleEndGame(event);
+                break;
             case NetReqUpdateGameStateEvent:
                 handleUpdateGameState(event);
                 break;
@@ -139,6 +150,15 @@ public class GameScreen extends BaseScreen {
         player.getConnection().addListener(listener);
 
         System.out.println("Game has been started.");
+    }
+
+    private void handleEndGame(MonopolyEvent event) {
+        @SuppressWarnings("unused")
+        NetReqEndGameEvent e = (NetReqEndGameEvent) event;
+
+        EventDistributor.send(Endpoint.GameScreen, Endpoint.Game, new ReqEndGame());
+
+        System.out.println("Game has been ended.");
     }
 
     private void handleUpdateGameState(MonopolyEvent event) {
@@ -179,6 +199,16 @@ public class GameScreen extends BaseScreen {
         ReqCardSelectedEvent e = (ReqCardSelectedEvent) event;
 
         selectedCard = e.getPosition();
+    }
+
+    @Override
+    public void dispose() {
+        map.dispose();
+        info.dispose();
+        control.dispose();
+
+        player.getConnection().removeListener(listener);
+        player.dispose();
     }
 
 }

@@ -28,6 +28,9 @@ public class Player implements Serializable {
     @Setter
     private int money;
 
+    @Setter
+    private boolean bankrupt;
+
     public Player() {
 
     }
@@ -56,6 +59,10 @@ public class Player implements Serializable {
                 " position: " + position + ", " +
                 " money: " + money + " " +
                 "}";
+    }
+
+    public boolean isBankrupt() {
+        return money < 0;
     }
 
 }

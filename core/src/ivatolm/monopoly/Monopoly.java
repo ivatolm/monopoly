@@ -86,6 +86,9 @@ public class Monopoly extends Game implements EventReceiver {
 			case GoGameScreenEvent:
 				setScreen(gameScreen);
 				break;
+			case ReqEndGame:
+				dispose();
+				break;
 			default:
 				break;
 		}
@@ -112,6 +115,8 @@ public class Monopoly extends Game implements EventReceiver {
 		server.dispose();
 
 		VisUI.dispose();
+
+		super.dispose();
 	}
 
 	@Override

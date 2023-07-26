@@ -17,6 +17,7 @@ public abstract class MonopolyEvent implements Serializable {
         ReqCreateLobby,
         NetReqUpdateLobbyInfoEvent,
         ReqInitClientEvent,
+        ReqEndGame,
 
         // response
         RespJoinedLobby,
@@ -34,6 +35,7 @@ public abstract class MonopolyEvent implements Serializable {
         NetReqRollDicesEvent,
         NetReqBuyEvent,
         NetReqPledgeEvent,
+        NetReqEndGameEvent,
 
         // game
         ReqRollDicesEvent,
