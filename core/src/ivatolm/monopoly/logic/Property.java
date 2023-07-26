@@ -33,12 +33,12 @@ public class Property {
         return cost[stage];
     }
 
-    public int getPrevCost() {
-        if (stage - 1 < 0) {
-            return cost[0];
+    public int getPledgedCost() {
+        if (!pledged) {
+            return cost[0] / 2;
         }
 
-        return cost[stage - 1];
+        return cost[stage - 1] / 2;
     }
 
     public boolean canBuy() {

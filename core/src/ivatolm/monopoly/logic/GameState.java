@@ -68,18 +68,25 @@ public class GameState {
             NetReqBuyEvent buyEvent = (NetReqBuyEvent) event;
 
             int position = buyEvent.getPosition();
-            if (playerPosition == position) {
-                Property p = property.get(position);
+            Property p = property.get(position);
 
-                String owner = p.getOwner();
-                Integer cost = p.getCost();
+            String owner = p.getOwner();
+            Integer cost = p.isPledged() ? p.getPledgedCost() : p.getCost();
 
-                Boolean isOwner = owner == null || owner.equals(playerId);
-                Boolean canAfford = playerMoney >= cost;
+            Boolean isOwner = owner == null || owner.equals(playerId);
+            Boolean canAfford = playerMoney >= cost;
 
-                if (p.canBuy() && isOwner && canAfford) {
-                    player.setMoney(playerMoney - cost);
-                    p.setOwner(playerId);
+            if (!p.isPledged() && playerPosition != position) {
+                return;
+            }
+
+            if (p.canBuy() && isOwner && canAfford) {
+                player.setMoney(playerMoney - cost);
+                p.setOwner(playerId);
+
+                if (p.isPledged()) {
+                    p.setPledged(false);
+                } else {
                     p.setStage(p.getStage() + 1);
                 }
             }
@@ -92,12 +99,11 @@ public class GameState {
             Property p = property.get(position);
 
             String owner = p.getOwner();
-            Integer cost = p.getPrevCost();
 
             Boolean isOwner = owner == null || owner.equals(playerId);
 
             if (!p.isPledged() && isOwner) {
-                player.setMoney(playerMoney + cost / 2);
+                player.setMoney(playerMoney + p.getPledgedCost());
                 p.setPledged(true);
             }
         }
