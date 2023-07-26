@@ -167,6 +167,11 @@ public class GameScreen extends BaseScreen {
         gameState = e.getGameState();
         info.updatePlayersInfo(gameState);
 
+        if (player.getId().equals(gameState.getTurningPlayerId())) {
+            int position = gameState.getPlayers().get(player.getId()).getPosition();
+            map.forceUpdateSelection(position);
+        }
+
         System.out.println("Game state was updated");
     }
 

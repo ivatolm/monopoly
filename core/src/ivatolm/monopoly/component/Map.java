@@ -54,6 +54,17 @@ public class Map extends ApplicationAdapter {
     private float scalingRatio;
     private Sprite selectedCard;
 
+    private final int[] nonPropertyPositions = {
+            0,
+            2, 4, 5, 7,
+            10,
+            12, 15, 17,
+            20,
+            22, 25, 28,
+            30,
+            33, 35, 36, 38
+    };
+
     public Map(Constraints constraints, Camera camera) {
         this.stage = new Stage();
         this.root = new VisTable(true);
@@ -180,18 +191,38 @@ public class Map extends ApplicationAdapter {
                 Gdx.app.getGraphics().getHeight());
     }
 
+    public void forceUpdateSelection(Integer position) {
+        selectedCard = allCards.get(position);
+
+        boolean restriced = false;
+        for (int i = 0; i < nonPropertyPositions.length; i++) {
+            if (nonPropertyPositions[i] == position) {
+                restriced = true;
+                break;
+            }
+        }
+
+        if (position == null || restriced) {
+            selectedCard = null;
+            return;
+        }
+
+        EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen,
+                new ReqCardSelectedEvent(position));
+    }
+
     public void render(GameState gameState, Player player) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
         updateInput();
-        updateSelection();
 
         renderMiddleCards();
         renderCornerCards();
 
         renderPlayers(gameState.getPlayers().values(), player);
         renderProperty(gameState.getProperty(), player);
+        updateSelection();
 
         batch.end();
     }
@@ -346,6 +377,11 @@ public class Map extends ApplicationAdapter {
         float x = Gdx.input.getX();
         float y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
+        if (!(constraints.getX() <= x && x <= constraints.getX() + constraints.getWidth()) ||
+                !(constraints.getY() <= y && y <= constraints.getY() + constraints.getHeight())) {
+            return null;
+        }
+
         double minDistance = Float.MAX_VALUE;
         Sprite closestCard = null;
         for (Sprite card : allCards) {
@@ -369,17 +405,6 @@ public class Map extends ApplicationAdapter {
     }
 
     private void updateInput() {
-        final int[] nonPropertyPositions = {
-                0,
-                2, 4, 5, 7,
-                10,
-                12, 15, 17,
-                20,
-                22, 25, 28,
-                30,
-                33, 35, 36, 38
-        };
-
         Sprite hoverCard = getHoverCard();
 
         if (hoverCard != null && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
@@ -393,31 +418,17 @@ public class Map extends ApplicationAdapter {
                 }
             }
 
-            boolean restriced = false;
-            for (int i = 0; i < nonPropertyPositions.length; i++) {
-                if (nonPropertyPositions[i] == position) {
-                    restriced = true;
-                    break;
-                }
-            }
-
-            if (position == null || restriced) {
-                selectedCard = null;
-                return;
-            }
-
-            EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen,
-                    new ReqCardSelectedEvent(position));
+            forceUpdateSelection(position);
         }
     }
 
     private void updateSelection() {
         for (Sprite card : allCards) {
-            card.setAlpha(0.75f);
+            card.setAlpha(1.0f);
         }
 
         if (selectedCard != null) {
-            selectedCard.setAlpha(1.0f);
+            selectedCard.setAlpha(0.75f);
         }
     }
 

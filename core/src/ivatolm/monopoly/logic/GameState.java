@@ -107,7 +107,7 @@ public class GameState {
 
             String owner = p.getOwner();
 
-            Boolean isOwner = owner == null || owner.equals(playerId);
+            Boolean isOwner = playerId.equals(owner);
 
             if (!p.isPledged() && isOwner) {
                 player.setMoney(playerMoney + p.getPledgedCost());
