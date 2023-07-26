@@ -189,6 +189,15 @@ public class GameState {
             player.setMoney(player.getMoney() + chancesCost);
         }
 
+        // Checking for getting boosts
+        final List<Integer> boostPositions = Arrays.asList(new Integer[] {
+                5, 12, 15, 25, 28, 35
+        });
+
+        if (boostPositions.contains(position)) {
+            player.setMoney((int) (player.getMoney() * 1.5f));
+        }
+
         // Checking for game ending
         int bankruptCount = 0;
         for (Player p : players.values()) {
