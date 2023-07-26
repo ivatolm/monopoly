@@ -1,6 +1,8 @@
 package ivatolm.monopoly.component;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -20,7 +22,9 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.game.ReqCardSelectedEvent;
+import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
+import ivatolm.monopoly.logic.Property;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -176,7 +180,7 @@ public class Map extends ApplicationAdapter {
                 Gdx.app.getGraphics().getHeight());
     }
 
-    public void render(Collection<Player> players, Player player) {
+    public void render(GameState gameState, Player player) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -185,7 +189,9 @@ public class Map extends ApplicationAdapter {
 
         renderMiddleCards();
         renderCornerCards();
-        renderPlayers(players, player);
+
+        renderPlayers(gameState.getPlayers().values(), player);
+        renderProperty(gameState.getProperty(), player);
 
         batch.end();
     }
@@ -305,6 +311,34 @@ public class Map extends ApplicationAdapter {
                     centerY - texture.getHeight() / 2 + shiftY);
 
             i++;
+        }
+    }
+
+    private void renderProperty(HashMap<Integer, Property> property, Player player) {
+        final float TINT_INTENSITY = 0.75f;
+
+        for (Entry<Integer, Property> e : property.entrySet()) {
+            int position = e.getKey();
+            Property p = e.getValue();
+
+            Sprite card = allCards.get(position);
+            String owner = p.getOwner();
+
+            if (owner == null) {
+                card.setColor(new Color(1, 1, 1, 1));
+            }
+
+            else if (owner.equals(player.getId())) {
+                if (!p.isPledged()) {
+                    card.setColor(new Color(TINT_INTENSITY, 1, TINT_INTENSITY, 1));
+                } else {
+                    card.setColor(new Color(TINT_INTENSITY, TINT_INTENSITY, TINT_INTENSITY, 1));
+                }
+            }
+
+            else {
+                card.setColor(new Color(1, TINT_INTENSITY, TINT_INTENSITY, 1));
+            }
         }
     }
 

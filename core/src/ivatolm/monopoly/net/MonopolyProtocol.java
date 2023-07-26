@@ -17,6 +17,7 @@ import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.logic.GameProperties;
 import ivatolm.monopoly.logic.GameState;
 import ivatolm.monopoly.logic.Player;
+import ivatolm.monopoly.logic.Property;
 
 public class MonopolyProtocol {
 
@@ -39,6 +40,8 @@ public class MonopolyProtocol {
         kryo.register(NetReqRollDicesEvent.class);
         kryo.register(NetReqBuyEvent.class);
         kryo.register(NetReqPledgeEvent.class);
+        kryo.register(int[].class);
+        kryo.register(Property.class);
     }
 
 }

@@ -1,11 +1,15 @@
 package ivatolm.monopoly.logic;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
 import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
+import lombok.Getter;
+import lombok.Setter;
 
 public class GameState {
 
@@ -15,10 +19,17 @@ public class GameState {
         TurnEnd
     }
 
+    @Getter
     private GameProperties gameProperties;
+    @Getter
     private HashMap<String, Player> players;
+    @Getter
+    private HashMap<Integer, Property> property;
 
+    @Getter
+    @Setter
     private StateType stateType;
+    @Getter
     private String[] turnOrder;
     private int turnPtr;
 
@@ -31,6 +42,8 @@ public class GameState {
             StateType startStateType) {
         this.gameProperties = gameProperties;
         this.players = players;
+        this.property = new HashMap<>();
+        generateProperty();
 
         this.stateType = startStateType;
         this.turnPtr = 0;
@@ -49,15 +62,25 @@ public class GameState {
         Player player = players.get(getTurningPlayer());
         int playerPosition = player.getPosition();
         int playerMoney = player.getMoney();
+        String playerId = player.getId();
 
         if (event.getType() == MonopolyEvent.Type.NetReqBuyEvent) {
             NetReqBuyEvent buyEvent = (NetReqBuyEvent) event;
 
             int position = buyEvent.getPosition();
-            System.out.println(position + ", " + playerPosition);
             if (playerPosition == position) {
-                if (playerMoney > 100) {
-                    player.setMoney(playerMoney - 100);
+                Property p = property.get(position);
+
+                String owner = p.getOwner();
+                Integer cost = p.getCost();
+
+                Boolean isOwner = owner == null || owner.equals(playerId);
+                Boolean canAfford = playerMoney >= cost;
+
+                if (p.canBuy() && isOwner && canAfford) {
+                    player.setMoney(playerMoney - cost);
+                    p.setOwner(playerId);
+                    p.setStage(p.getStage() + 1);
                 }
             }
         }
@@ -65,9 +88,18 @@ public class GameState {
         else if (event.getType() == MonopolyEvent.Type.NetReqPledgeEvent) {
             NetReqPledgeEvent pledgeEvent = (NetReqPledgeEvent) event;
 
-            @SuppressWarnings("unused")
             int position = pledgeEvent.getPosition();
-            player.setMoney(playerMoney + 100);
+            Property p = property.get(position);
+
+            String owner = p.getOwner();
+            Integer cost = p.getPrevCost();
+
+            Boolean isOwner = owner == null || owner.equals(playerId);
+
+            if (!p.isPledged() && isOwner) {
+                player.setMoney(playerMoney + cost / 2);
+                p.setPledged(true);
+            }
         }
     }
 
@@ -99,24 +131,28 @@ public class GameState {
         }
     }
 
-    public void setStateType(StateType stateType) {
-        this.stateType = stateType;
-    }
+    private void generateProperty() {
+        List<Integer> nonPropertyPositions = Arrays.asList(new Integer[] {
+                0,
+                2, 4, 5, 7,
+                10,
+                12, 15, 17,
+                20,
+                22, 25, 28,
+                30,
+                33, 35, 36, 38
+        });
 
-    public StateType getStateType() {
-        return stateType;
-    }
+        for (int i = 0; i < 40; i++) {
+            if (nonPropertyPositions.contains(i)) {
+                continue;
+            }
 
-    public GameProperties getGameProperties() {
-        return gameProperties;
-    }
+            int[] cost = new int[] { 100, 200, 300, 400, 500 };
 
-    public HashMap<String, Player> getPlayers() {
-        return players;
-    }
-
-    public String[] getTurnOrder() {
-        return turnOrder;
+            Property property = new Property(cost, 0);
+            this.property.put(i, property);
+        }
     }
 
     public String getTurningPlayer() {

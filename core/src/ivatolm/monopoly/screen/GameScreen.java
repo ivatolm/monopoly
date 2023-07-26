@@ -1,7 +1,5 @@
 package ivatolm.monopoly.screen;
 
-import java.util.Collection;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.esotericsoftware.kryonet.Connection;
@@ -70,8 +68,7 @@ public class GameScreen extends BaseScreen {
         ScreenUtils.clear(Color.BLACK);
 
         if (gameState != null) {
-            Collection<Player> players = gameState.getPlayers().values();
-            map.render(players, player);
+            map.render(gameState, player);
             info.render(delta);
             // control is rendered with GameScreen stage
         }
