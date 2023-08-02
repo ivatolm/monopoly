@@ -32,13 +32,13 @@ public abstract class MonopolyEvent implements Serializable {
         NetReqStartGameEvent,
         NetReqUpdateGameStateEvent,
         NetRespConnectEvent,
-        NetReqRollDicesEvent,
+        NetReqSubmitEvent,
         NetReqBuyEvent,
         NetReqPledgeEvent,
         NetReqEndGameEvent,
 
         // game
-        ReqRollDicesEvent,
+        ReqSubmitEvent,
         ReqBuyEvent,
         ReqPledgeEvent,
         ReqCardSelectedEvent,

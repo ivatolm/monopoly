@@ -65,7 +65,7 @@ public class GameState {
         }
     }
 
-    public void preUpdate(MonopolyEvent event) {
+    public void process(MonopolyEvent event) {
         Player player = players.get(getTurningPlayerId());
         int playerPosition = player.getPosition();
         int playerMoney = player.getMoney();
@@ -118,6 +118,12 @@ public class GameState {
 
     public void update() {
         updateLobbyData();
+
+        // Updating turning player
+        turnPtr = (turnPtr + 1) % turnOrder.length;
+        while (players.get(getTurningPlayerId()).isBankrupt()) {
+            turnPtr = (turnPtr + 1) % turnOrder.length;
+        }
 
         // Updating position of turning player
         Random random = new Random();
@@ -208,12 +214,6 @@ public class GameState {
 
         if (bankruptCount == turnOrder.length - 1) {
             gameEnded = true;
-        }
-
-        // Updating turning player
-        turnPtr = (turnPtr + 1) % turnOrder.length;
-        while (players.get(getTurningPlayerId()).isBankrupt()) {
-            turnPtr = (turnPtr + 1) % turnOrder.length;
         }
     }
 

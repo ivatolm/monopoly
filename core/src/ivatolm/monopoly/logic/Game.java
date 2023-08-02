@@ -11,7 +11,7 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
 import ivatolm.monopoly.event.events.net.NetReqEndGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
-import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqSubmitEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
 
@@ -103,6 +103,8 @@ public class Game extends Thread {
     }
 
     private void handleTurnStartState() {
+        state.update();
+
         sendGameState();
 
         state.setStateType(GameState.StateType.TurnEnd);
@@ -118,25 +120,22 @@ public class Game extends Thread {
                 if (object instanceof NetReqBuyEvent) {
                     NetReqBuyEvent buyEvent = (NetReqBuyEvent) object;
 
-                    state.preUpdate(buyEvent);
+                    state.process(buyEvent);
                     sendGameState();
                 }
 
                 else if (object instanceof NetReqPledgeEvent) {
                     NetReqPledgeEvent plegdeEvent = (NetReqPledgeEvent) object;
 
-                    state.preUpdate(plegdeEvent);
+                    state.process(plegdeEvent);
                     sendGameState();
                 }
 
-                else if (object instanceof NetReqRollDicesEvent) {
+                else if (object instanceof NetReqSubmitEvent) {
                     @SuppressWarnings("unused")
-                    NetReqRollDicesEvent rollDicesEvent = (NetReqRollDicesEvent) object;
+                    NetReqSubmitEvent submitEvent = (NetReqSubmitEvent) object;
 
                     waitingResponse = false;
-                    state.update();
-
-                    System.out.println("Updating game state...");
                 }
             }
         };

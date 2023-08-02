@@ -11,7 +11,7 @@ import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.EventReceiver.Endpoint;
 import ivatolm.monopoly.event.events.game.ReqBuyEvent;
 import ivatolm.monopoly.event.events.game.ReqPledgeEvent;
-import ivatolm.monopoly.event.events.game.ReqRollDicesEvent;
+import ivatolm.monopoly.event.events.game.ReqSubmitEvent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,14 +34,14 @@ public class Control extends ApplicationAdapter {
     public void generateUI() {
         this.root.left().top();
 
-        VisTextButton rollDicesButton = new VisTextButton("Roll dices");
+        VisTextButton submitButton = new VisTextButton("Submit");
         VisTextButton buyButton = new VisTextButton("Buy");
         VisTextButton pledgeButton = new VisTextButton("Pledge");
 
-        rollDicesButton.addListener(new ClickListener() {
+        submitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqRollDicesEvent());
+                EventDistributor.send(Endpoint.GameScreen, Endpoint.GameScreen, new ReqSubmitEvent());
             }
         });
 
@@ -59,11 +59,11 @@ public class Control extends ApplicationAdapter {
             }
         });
 
-        rollDicesButton.setFocusBorderEnabled(false);
+        submitButton.setFocusBorderEnabled(false);
         buyButton.setFocusBorderEnabled(false);
         pledgeButton.setFocusBorderEnabled(false);
 
-        root.add(rollDicesButton);
+        root.add(submitButton);
         root.add(buyButton);
         root.add(pledgeButton);
     }

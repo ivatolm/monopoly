@@ -13,11 +13,11 @@ import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.game.ReqBuyEvent;
 import ivatolm.monopoly.event.events.game.ReqCardSelectedEvent;
 import ivatolm.monopoly.event.events.game.ReqPledgeEvent;
-import ivatolm.monopoly.event.events.game.ReqRollDicesEvent;
+import ivatolm.monopoly.event.events.game.ReqSubmitEvent;
 import ivatolm.monopoly.event.events.net.NetReqBuyEvent;
 import ivatolm.monopoly.event.events.net.NetReqEndGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
-import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqSubmitEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
 import ivatolm.monopoly.event.events.request.ReqEndGame;
@@ -126,7 +126,7 @@ public class GameScreen extends BaseScreen {
             case NetReqUpdateGameStateEvent:
                 handleUpdateGameState(event);
                 break;
-            case ReqRollDicesEvent:
+            case ReqSubmitEvent:
                 handleRollDices(event);
                 break;
             case ReqBuyEvent:
@@ -177,9 +177,9 @@ public class GameScreen extends BaseScreen {
 
     private void handleRollDices(MonopolyEvent event) {
         @SuppressWarnings("unused")
-        ReqRollDicesEvent e = (ReqRollDicesEvent) event;
+        ReqSubmitEvent e = (ReqSubmitEvent) event;
 
-        player.getConnection().sendTCP(new NetReqRollDicesEvent());
+        player.getConnection().sendTCP(new NetReqSubmitEvent());
     }
 
     private void handleBuyEvent(MonopolyEvent event) {

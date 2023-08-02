@@ -11,7 +11,7 @@ import ivatolm.monopoly.event.events.net.NetRespConnectEvent;
 import ivatolm.monopoly.event.events.net.NetReqDisconnectEvent;
 import ivatolm.monopoly.event.events.net.NetReqEndGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqPledgeEvent;
-import ivatolm.monopoly.event.events.net.NetReqRollDicesEvent;
+import ivatolm.monopoly.event.events.net.NetReqSubmitEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateGameStateEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
@@ -38,7 +38,7 @@ public class MonopolyProtocol {
         kryo.register(HashMap.class);
         kryo.register(String[].class);
         kryo.register(NetReqUpdateGameStateEvent.class);
-        kryo.register(NetReqRollDicesEvent.class);
+        kryo.register(NetReqSubmitEvent.class);
         kryo.register(NetReqBuyEvent.class);
         kryo.register(NetReqPledgeEvent.class);
         kryo.register(int[].class);
