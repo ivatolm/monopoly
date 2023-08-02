@@ -1,9 +1,6 @@
 package ivatolm.monopoly.logic;
 
 import java.util.HashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -19,7 +16,6 @@ public class Game extends Thread {
 
     private volatile boolean running;
     private volatile boolean working;
-    private Lock lock;
 
     private HashMap<String, Player> players;
 
@@ -33,7 +29,6 @@ public class Game extends Thread {
 
         this.running = true;
         this.working = false;
-        this.lock = new ReentrantLock();
     }
 
     public GameProperties getProperties() {
@@ -41,12 +36,11 @@ public class Game extends Thread {
     }
 
     public void setWorking(boolean working) {
-        lock.lock();
         this.working = working;
-        lock.unlock();
     }
 
     public void dispose() {
+        this.working = false;
         this.running = false;
     }
 
@@ -63,9 +57,7 @@ public class Game extends Thread {
                 continue;
             }
 
-            lock.lock();
             update();
-            lock.unlock();
         }
     }
 
@@ -141,7 +133,7 @@ public class Game extends Thread {
         };
 
         player.getConnection().addListener(listener);
-        while (waitingResponse) {
+        while (running && waitingResponse) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
