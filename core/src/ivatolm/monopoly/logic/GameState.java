@@ -2,6 +2,7 @@ package ivatolm.monopoly.logic;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -26,7 +27,7 @@ public class GameState {
     @Getter
     private HashMap<String, Player> players;
     @Getter
-    private HashMap<Integer, Property> property;
+    private LinkedHashMap<Integer, Property> property;
 
     @Getter
     @Setter
@@ -47,7 +48,7 @@ public class GameState {
             StateType startStateType) {
         this.gameProperties = gameProperties;
         this.players = players;
-        this.property = new HashMap<>();
+        this.property = new LinkedHashMap<>();
         generateProperty();
 
         this.stateType = startStateType;

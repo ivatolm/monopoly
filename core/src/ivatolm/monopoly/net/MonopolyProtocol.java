@@ -1,6 +1,7 @@
 package ivatolm.monopoly.net;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.esotericsoftware.kryo.Kryo;
 
@@ -36,6 +37,7 @@ public class MonopolyProtocol {
         kryo.register(GameState.StateType.class);
         kryo.register(GameProperties.class);
         kryo.register(HashMap.class);
+        kryo.register(LinkedHashMap.class);
         kryo.register(String[].class);
         kryo.register(NetReqUpdateGameStateEvent.class);
         kryo.register(NetReqSubmitEvent.class);

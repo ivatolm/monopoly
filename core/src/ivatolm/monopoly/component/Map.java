@@ -1,8 +1,12 @@
 package ivatolm.monopoly.component;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +19,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -54,6 +60,7 @@ public class Map extends ApplicationAdapter {
     private Array<Texture> playerIconTextures;
     private Texture thisPlayerIconTexture;
     private BitmapFont font;
+    private Array<String> middleCardsNames;
 
     private float mapHeight;
     private float scalingRatio;
@@ -81,11 +88,10 @@ public class Map extends ApplicationAdapter {
         this.batch = new SpriteBatch();
 
         loadTextures();
+        loadPropertyNames();
         computeScalingFactor();
+        generateFont();
         generatePlayerIcon();
-
-        this.font = new BitmapFont();
-        font.setColor(Color.GREEN);
     }
 
     @Override
@@ -104,6 +110,7 @@ public class Map extends ApplicationAdapter {
             thisPlayerIconTexture.dispose();
         }
 
+        generateFont();
         generatePlayerIcon();
     }
 
@@ -160,6 +167,35 @@ public class Map extends ApplicationAdapter {
                 allCards.add(middleCards.get(row * 9 + i));
             }
         }
+    }
+
+    private void loadPropertyNames() {
+        middleCardsNames = new Array<>();
+
+        try {
+            File file = new File("../assets/cards/cardNames.txt");
+
+            Scanner reader = new Scanner(file);
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
+                middleCardsNames.add(data);
+            }
+            reader.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void generateFont() {
+        FreeTypeFontParameter genParams = new FreeTypeFontParameter();
+        genParams.size = (int) (16 * scalingRatio);
+        genParams.color = Color.BLACK;
+
+        FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
+                Gdx.files.internal("../assets/fonts/Roboto-Black.ttf"));
+        this.font = gen.generateFont(genParams);
+        gen.dispose();
     }
 
     private void generatePlayerIcon() {
@@ -226,13 +262,12 @@ public class Map extends ApplicationAdapter {
         updateInput();
 
         renderMiddleCards();
+        renderMiddleCardsInfo(gameState.getProperty());
         renderCornerCards();
 
         renderPlayers(gameState.getPlayers().values(), player);
         renderProperty(gameState.getProperty(), player);
         updateSelection();
-
-        renderMiddleCardsInfo();
 
         batch.end();
     }
@@ -259,34 +294,49 @@ public class Map extends ApplicationAdapter {
         }
     }
 
-    private void renderMiddleCardsInfo() {
+    private void renderMiddleCardsInfo(HashMap<Integer, Property> property) {
+        final float topPadding = 60 * scalingRatio;
+        final float sidePadding = 10 * scalingRatio;
+
         Array<Sprite> sprites = middleCards;
         Sprite template = sprites.get(0);
         float templateHeight = template.getHeight() * scalingRatio;
 
         Matrix4 oldTransformMatrix = batch.getTransformMatrix().cpy();
 
-        for (int row = 0; row < 4; row++) {
-            for (int i = 0; i < 9; i++) {
-                int angle = 270 - 90 * row;
+        int iter = 0;
+        for (Integer rawPropertyPosition : property.keySet()) {
+            int propertyPosition = convAllToMiddleCardsPosition(rawPropertyPosition);
+            int row = propertyPosition / 9;
+            int i = propertyPosition - 9 * row;
 
+            int angle = 270 - 90 * row;
+
+            String name = middleCardsNames.get(iter);
+            name += " ";
+            name += " ";
+            name += "$";
+            name += property.get(rawPropertyPosition).getCost();
+
+            String[] words = name.split(" ");
+            for (int j = 0; j < words.length; j++) {
                 float offsetX = 0, offsetY = 0;
                 switch (angle) {
                     case 0:
-                        offsetX = 0;
-                        offsetY = templateHeight;
+                        offsetX = sidePadding;
+                        offsetY = templateHeight - font.getLineHeight() * j - topPadding;
                         break;
                     case 90:
-                        offsetX = -templateHeight;
-                        offsetY = 0;
+                        offsetX = -templateHeight + font.getLineHeight() * j + topPadding;
+                        offsetY = sidePadding;
                         break;
                     case 180:
-                        offsetX = 0;
-                        offsetY = -templateHeight;
+                        offsetX = -sidePadding;
+                        offsetY = -templateHeight + font.getLineHeight() * j + topPadding;
                         break;
                     case 270:
-                        offsetX = templateHeight;
-                        offsetY = 0;
+                        offsetX = templateHeight - font.getLineHeight() * j - topPadding;
+                        offsetY = -sidePadding;
                         break;
                 }
 
@@ -299,8 +349,10 @@ public class Map extends ApplicationAdapter {
                 fontTransformMatrix.trn(position.x, position.y, 0);
                 batch.setTransformMatrix(fontTransformMatrix);
 
-                font.draw(batch, row + ":" + i, 0, 0);
+                font.draw(batch, words[j], 0, 0);
             }
+
+            iter++;
         }
 
         batch.setTransformMatrix(oldTransformMatrix);
@@ -496,6 +548,11 @@ public class Map extends ApplicationAdapter {
         }
 
         return new Vector2(x, y);
+    }
+
+    private int convAllToMiddleCardsPosition(int position) {
+        int row = position / 10;
+        return position - row - 1;
     }
 
 }
