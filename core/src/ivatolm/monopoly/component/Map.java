@@ -11,10 +11,14 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -49,6 +53,7 @@ public class Map extends ApplicationAdapter {
 
     private Array<Texture> playerIconTextures;
     private Texture thisPlayerIconTexture;
+    private BitmapFont font;
 
     private float mapHeight;
     private float scalingRatio;
@@ -73,11 +78,14 @@ public class Map extends ApplicationAdapter {
         this.constraints = constraints;
         this.camera = camera;
 
-        batch = new SpriteBatch();
+        this.batch = new SpriteBatch();
 
         loadTextures();
         computeScalingFactor();
         generatePlayerIcon();
+
+        this.font = new BitmapFont();
+        font.setColor(Color.GREEN);
     }
 
     @Override
@@ -224,43 +232,24 @@ public class Map extends ApplicationAdapter {
         renderProperty(gameState.getProperty(), player);
         updateSelection();
 
+        renderMiddleCardsInfo();
+
         batch.end();
     }
 
     private void renderMiddleCards() {
         Array<Sprite> sprites = middleCards;
-
-        Sprite template = sprites.get(0);
-        float templateWidth = template.getWidth() * scalingRatio;
-        float templateHeight = template.getHeight() * scalingRatio;
         for (int row = 0; row < 4; row++) {
+            int angle = 270 - 90 * row;
+
             for (int i = 0; i < 9; i++) {
+                Vector2 position = getMiddleCardPosition(row, i);
                 Sprite sprite = sprites.get(row * 9 + i);
 
-                float x = constraints.getX(), y = constraints.getY();
-                switch (row) {
-                    case 0:
-                        x += 0;
-                        y += templateHeight + (templateWidth + i * templateWidth);
-                        break;
-                    case 1:
-                        x += templateHeight + (templateWidth + i * templateWidth);
-                        y += templateHeight + (templateHeight + 9 * templateWidth);
-                        break;
-                    case 2:
-                        x += templateHeight + (templateHeight + 9 * templateWidth);
-                        y += templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
-                        break;
-                    case 3:
-                        x += templateHeight + (9 * templateWidth - templateWidth - i * templateWidth);
-                        y += 0;
-                        break;
-                }
+                sprite.setPosition(position.x, position.y);
 
-                sprite.setPosition(x, y);
-
-                sprite.setOrigin(0, templateHeight);
-                sprite.setRotation(270 - 90 * row);
+                sprite.setOrigin(0, sprite.getHeight());
+                sprite.setRotation(angle);
                 sprite.setOrigin(0, 0);
 
                 sprite.setScale(scalingRatio);
@@ -268,6 +257,53 @@ public class Map extends ApplicationAdapter {
                 sprite.draw(batch);
             }
         }
+    }
+
+    private void renderMiddleCardsInfo() {
+        Array<Sprite> sprites = middleCards;
+        Sprite template = sprites.get(0);
+        float templateHeight = template.getHeight() * scalingRatio;
+
+        Matrix4 oldTransformMatrix = batch.getTransformMatrix().cpy();
+
+        for (int row = 0; row < 4; row++) {
+            for (int i = 0; i < 9; i++) {
+                int angle = 270 - 90 * row;
+
+                float offsetX = 0, offsetY = 0;
+                switch (angle) {
+                    case 0:
+                        offsetX = 0;
+                        offsetY = templateHeight;
+                        break;
+                    case 90:
+                        offsetX = -templateHeight;
+                        offsetY = 0;
+                        break;
+                    case 180:
+                        offsetX = 0;
+                        offsetY = -templateHeight;
+                        break;
+                    case 270:
+                        offsetX = templateHeight;
+                        offsetY = 0;
+                        break;
+                }
+
+                Vector2 position = getMiddleCardPosition(row, i);
+                position.x += offsetX;
+                position.y += offsetY;
+
+                Matrix4 fontTransformMatrix = new Matrix4();
+                fontTransformMatrix.rotate(new Vector3(0, 0, 1), angle);
+                fontTransformMatrix.trn(position.x, position.y, 0);
+                batch.setTransformMatrix(fontTransformMatrix);
+
+                font.draw(batch, row + ":" + i, 0, 0);
+            }
+        }
+
+        batch.setTransformMatrix(oldTransformMatrix);
     }
 
     private void renderCornerCards() {
@@ -430,6 +466,36 @@ public class Map extends ApplicationAdapter {
         if (selectedCard != null) {
             selectedCard.setAlpha(0.75f);
         }
+    }
+
+    private Vector2 getMiddleCardPosition(int side, int pos) {
+        Array<Sprite> sprites = middleCards;
+
+        Sprite template = sprites.get(0);
+        float templateWidth = template.getWidth() * scalingRatio;
+        float templateHeight = template.getHeight() * scalingRatio;
+
+        float x = constraints.getX(), y = constraints.getY();
+        switch (side) {
+            case 0:
+                x += 0;
+                y += templateHeight + (templateWidth + pos * templateWidth);
+                break;
+            case 1:
+                x += templateHeight + (templateWidth + pos * templateWidth);
+                y += templateHeight + (templateHeight + 9 * templateWidth);
+                break;
+            case 2:
+                x += templateHeight + (templateHeight + 9 * templateWidth);
+                y += templateHeight + (9 * templateWidth - templateWidth - pos * templateWidth);
+                break;
+            case 3:
+                x += templateHeight + (9 * templateWidth - templateWidth - pos * templateWidth);
+                y += 0;
+                break;
+        }
+
+        return new Vector2(x, y);
     }
 
 }
