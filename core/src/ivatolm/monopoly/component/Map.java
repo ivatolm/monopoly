@@ -2,7 +2,6 @@ package ivatolm.monopoly.component;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -313,12 +312,14 @@ public class Map extends ApplicationAdapter {
             int angle = 270 - 90 * row;
 
             String name = middleCardsNames.get(iter);
-            name += " ";
-            name += " ";
-            name += "$";
-            name += property.get(rawPropertyPosition).getCost();
+            name = name.replace(" ", "/");
+            name += "/";
+            name += "/";
+            name += "Cost: " + property.get(rawPropertyPosition).getCost() + "$";
+            name += "/";
+            name += "Rent: " + property.get(rawPropertyPosition).getRentCost() + "$";
 
-            String[] words = name.split(" ");
+            String[] words = name.split("/");
             for (int j = 0; j < words.length; j++) {
                 float offsetX = 0, offsetY = 0;
                 switch (angle) {

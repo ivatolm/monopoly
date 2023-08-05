@@ -241,8 +241,15 @@ public class GameState {
                 continue;
             }
 
-            int[] cost = new int[] { 100, 200, 300, 400, 500 };
-            int[] rent = new int[] { 10, 20, 30, 40, 50 };
+            int costOrigin = 100 * (1 + i / 3);
+            int rentOrigin = 10 * (1 + i / 3);
+
+            int[] cost = new int[5];
+            int[] rent = new int[5];
+            for (int j = 0; j < 5; j++) {
+                cost[j] = costOrigin * (j + 1);
+                rent[j] = rentOrigin * (j + 1);
+            }
 
             Property property = new Property(cost, rent, 0);
             this.property.put(i, property);
