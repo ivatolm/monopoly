@@ -12,6 +12,7 @@ import com.kotcrab.vis.ui.widget.VisTextField;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoLobbyScreenEvent;
+import ivatolm.monopoly.event.events.navigation.GoMainMenuScreenEvent;
 import ivatolm.monopoly.event.events.request.ReqConnectToLobbyEvent;
 import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
 import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
@@ -25,12 +26,14 @@ public class CreateLobbyScreen extends BaseScreen {
     private VisTextField nameTextField;
     private VisTextButton connectButton;
     private VisLabel errorMessageLabel;
+    private VisTextButton backButton;
 
     protected void generateUI() {
         nameLabel = new VisLabel("Name: ");
         nameTextField = new VisTextField();
         connectButton = new VisTextButton("Create");
         errorMessageLabel = new VisLabel("", Color.RED);
+        backButton = new VisTextButton("Back");
 
         connectButton.addListener(new ClickListener() {
             @Override
@@ -50,10 +53,21 @@ public class CreateLobbyScreen extends BaseScreen {
             }
         });
 
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Game,
+                        new GoMainMenuScreenEvent());
+            }
+        });
+
         nameTextField.setFocusBorderEnabled(false);
 
         connectButton.setColor(Color.BLUE);
         connectButton.setFocusBorderEnabled(false);
+
+        backButton.setColor(Color.BLUE);
+        backButton.setFocusBorderEnabled(false);
 
         root.add(nameLabel).colspan(1);
         root.add(nameTextField).colspan(1)
@@ -65,6 +79,10 @@ public class CreateLobbyScreen extends BaseScreen {
                 .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
         root.row();
         root.add(errorMessageLabel).colspan(2);
+        root.row();
+        root.add(backButton).colspan(2)
+                .width(Value.percentWidth(WidgetConstants.BUTTON_WIDTH, root))
+                .height(Value.percentHeight(WidgetConstants.BUTTON_HEIGHT, root));
 
         stage.addActor(root);
     }
