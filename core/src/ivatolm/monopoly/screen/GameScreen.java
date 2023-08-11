@@ -212,8 +212,10 @@ public class GameScreen extends BaseScreen {
         info.dispose();
         control.dispose();
 
-        player.getConnection().removeListener(listener);
-        player.dispose();
+        if (player != null) {
+            player.getConnection().removeListener(listener);
+            player.dispose();
+        }
     }
 
 }
