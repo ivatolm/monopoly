@@ -123,7 +123,7 @@ public class MonopolyClient implements EventReceiver {
             client.connect(100, e.getIp(), 27841);
             client.sendTCP(new NetReqConnectEvent(e.getName()));
         } catch (IOException e1) {
-            e1.printStackTrace();
+            // connection failed
         }
 
         try {
