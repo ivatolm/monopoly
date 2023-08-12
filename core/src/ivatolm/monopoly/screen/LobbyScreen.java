@@ -15,9 +15,9 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 import ivatolm.monopoly.event.EventDistributor;
 import ivatolm.monopoly.event.MonopolyEvent;
 import ivatolm.monopoly.event.events.navigation.GoGameScreenEvent;
-import ivatolm.monopoly.event.events.navigation.GoMainMenuScreenEvent;
 import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
+import ivatolm.monopoly.event.events.request.ReqEndGame;
 import ivatolm.monopoly.event.events.request.ReqInitClientEvent;
 import ivatolm.monopoly.logic.Player;
 import ivatolm.monopoly.widget.WidgetConstants;
@@ -59,11 +59,10 @@ public class LobbyScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 EventDistributor.send(Endpoint.JoinLobbyScreen, Endpoint.Game,
-                        new GoMainMenuScreenEvent());
+                        new ReqEndGame());
             }
         });
 
-        backButton.setColor(Color.BLUE);
         backButton.setFocusBorderEnabled(false);
 
         root.add(players);

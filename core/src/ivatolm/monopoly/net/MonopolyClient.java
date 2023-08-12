@@ -191,11 +191,14 @@ public class MonopolyClient implements EventReceiver {
     }
 
     private void closeClient() {
-        client.stop();
-        try {
-            client.dispose();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (client != null) {
+            client.stop();
+
+            try {
+                client.dispose();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         client = null;

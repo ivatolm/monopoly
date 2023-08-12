@@ -39,7 +39,7 @@ public class CreateLobbyScreen extends BaseScreen {
     }
 
     protected void generateUI() {
-        nameLabel = new VisLabel("Name: ");
+        nameLabel = new VisLabel("Name ");
         nameTextField = new VisTextField();
 
         VisRadioButton button2 = new VisRadioButton("2");
@@ -126,10 +126,7 @@ public class CreateLobbyScreen extends BaseScreen {
         button5.setFocusBorderEnabled(false);
         button6.setFocusBorderEnabled(false);
 
-        connectButton.setColor(Color.BLUE);
         connectButton.setFocusBorderEnabled(false);
-
-        backButton.setColor(Color.BLUE);
         backButton.setFocusBorderEnabled(false);
 
         root.add(nameLabel).colspan(1);
