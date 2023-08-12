@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.esotericsoftware.kryonet.Connection;
 
 import ivatolm.monopoly.event.MonopolyEvent;
+import ivatolm.monopoly.event.events.net.NetReqStartGameEvent;
 import ivatolm.monopoly.event.events.net.NetReqUpdateLobbyInfoEvent;
 import ivatolm.monopoly.event.events.net.NetRespConnectEvent;
 
@@ -15,11 +16,13 @@ public class Lobby {
     private GameProperties properties;
 
     private HashMap<String, Player> players;
+    private HashMap<String, Player> disconnectedPlayers;
 
     public Lobby(GameProperties properties) {
         this.properties = properties;
 
         this.players = new HashMap<>();
+        this.disconnectedPlayers = new HashMap<>();
 
         this.game = new Game(properties, players);
         this.game.start();
@@ -42,18 +45,33 @@ public class Lobby {
             player.getConnection().sendTCP(response);
         }
 
-        String uuid = UUID.randomUUID().toString();
-        player.setId(uuid);
-        players.put(player.getId(), player);
-
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
-        broadcast(updateLobbyInfo);
+        if (!disconnectedPlayers.isEmpty()) {
+            String uuid = disconnectedPlayers.keySet().iterator().next();
+            Player p = disconnectedPlayers.get(uuid);
+
+            disconnectedPlayers.remove(uuid);
+
+            p.setConnection(player.getConnection());
+            p.setName(player.getName());
+            players.put(uuid, p);
+
+            MonopolyEvent startGameEvent = new NetReqStartGameEvent(p);
+            p.getConnection().sendTCP(startGameEvent);
+
+        } else {
+            String uuid = UUID.randomUUID().toString();
+            player.setId(uuid);
+            players.put(player.getId(), player);
+
+            MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
+            broadcast(updateLobbyInfo);
+        }
 
         if (players.size() == properties.getPlayerCount()) {
             try {
@@ -67,6 +85,9 @@ public class Lobby {
     }
 
     public void removePlayer(String uuid) {
+        this.game.setWorking(false);
+
+        disconnectedPlayers.put(uuid, players.get(uuid));
         players.remove(uuid);
 
         MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
@@ -74,11 +95,9 @@ public class Lobby {
     }
 
     public void removePlayer(Connection connection) {
-        this.game.setWorking(false);
-
         for (Player player : players.values()) {
             if (player.getConnection() == connection) {
-                players.remove(player.getId());
+                removePlayer(player.getId());
                 break;
             }
         }

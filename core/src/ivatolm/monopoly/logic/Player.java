@@ -18,6 +18,7 @@ public class Player implements Serializable {
     private transient Connection connection;
 
     @Getter
+    @Setter
     private String name;
 
     @Getter

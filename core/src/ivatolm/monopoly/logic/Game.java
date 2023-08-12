@@ -37,6 +37,9 @@ public class Game extends Thread {
 
     public void setWorking(boolean working) {
         this.working = working;
+        if (this.working) {
+            sendGameState();
+        }
     }
 
     public void dispose() {
@@ -137,6 +140,11 @@ public class Game extends Thread {
 
         player.getConnection().addListener(listener);
         while (running && waitingResponse) {
+            if (!working) {
+                player.getConnection().removeListener(listener);
+                return;
+            }
+
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
