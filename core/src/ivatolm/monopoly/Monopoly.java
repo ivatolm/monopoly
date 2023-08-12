@@ -87,7 +87,7 @@ public class Monopoly extends Game implements EventReceiver {
 				setScreen(gameScreen);
 				break;
 			case ReqEndGame:
-				dispose();
+				reset();
 				break;
 			default:
 				break;
@@ -124,6 +124,19 @@ public class Monopoly extends Game implements EventReceiver {
 		super.setScreen(screen);
 
 		((BaseScreen) screen).setAsInputHandler();
+	}
+
+	private void reset() {
+		setScreen(mainMenuScreen);
+
+		client.dispose();
+		server.dispose();
+
+		client = new MonopolyClient();
+		EventDistributor.register(Endpoint.Client, client);
+
+		server = new MonopolyServer();
+		EventDistributor.register(Endpoint.Server, server);
 	}
 
 }

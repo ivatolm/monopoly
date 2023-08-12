@@ -97,9 +97,12 @@ public class Game extends Thread {
     private void handleTurnStartState() {
         state.update();
 
-        sendGameState();
-
-        state.setStateType(GameState.StateType.TurnEnd);
+        if (!state.isGameEnded()) {
+            sendGameState();
+            state.setStateType(GameState.StateType.TurnEnd);
+        } else {
+            state.setStateType(GameState.StateType.End);
+        }
     }
 
     private void handleTurnEndState() {
