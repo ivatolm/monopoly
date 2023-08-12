@@ -116,10 +116,10 @@ public class LobbyScreen extends BaseScreen {
     private void handleUpdateLobbyInfo(MonopolyEvent event) {
         NetReqUpdateLobbyInfoEvent e = (NetReqUpdateLobbyInfoEvent) event;
 
-        Player[] list = e.getPlayerList();
+        Player[] list = e.getPlayers();
 
         players.clear();
-        players.add("Connected players count: " + list.length);
+        players.add("Connected players count: " + list.length + " / " + e.getRequiredPlayersCount());
         players.row();
         for (Player player : list) {
             players.add(new VisLabel(player.getName()));

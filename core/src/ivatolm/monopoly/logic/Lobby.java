@@ -69,7 +69,8 @@ public class Lobby {
             player.setId(uuid);
             players.put(player.getId(), player);
 
-            MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
+            MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList(),
+                    properties.getPlayerCount());
             broadcast(updateLobbyInfo);
         }
 
@@ -90,7 +91,7 @@ public class Lobby {
         disconnectedPlayers.put(uuid, players.get(uuid));
         players.remove(uuid);
 
-        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
+        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList(), properties.getPlayerCount());
         broadcast(updateLobbyInfo);
     }
 
@@ -102,7 +103,7 @@ public class Lobby {
             }
         }
 
-        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList());
+        MonopolyEvent updateLobbyInfo = new NetReqUpdateLobbyInfoEvent(getPlayerList(), properties.getPlayerCount());
         broadcast(updateLobbyInfo);
     }
 

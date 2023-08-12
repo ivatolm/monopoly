@@ -14,7 +14,6 @@ import ivatolm.monopoly.event.events.net.NetReqConnectEvent;
 import ivatolm.monopoly.event.events.net.NetReqDisconnectEvent;
 import ivatolm.monopoly.event.events.request.ReqCreateLobbyEvent;
 import ivatolm.monopoly.event.events.response.RespLobbyCreatedEvent;
-import ivatolm.monopoly.logic.GameProperties;
 import ivatolm.monopoly.logic.Lobby;
 import ivatolm.monopoly.logic.Player;
 
@@ -105,7 +104,7 @@ public class MonopolyServer implements EventReceiver {
 
         setupServer();
 
-        lobby = new Lobby(new GameProperties(2));
+        lobby = new Lobby(e.getGameProperties());
 
         EventDistributor.send(Endpoint.Server, Endpoint.CreateLobbyScreen,
                 new RespLobbyCreatedEvent("127.0.0.1", e.getName()));
