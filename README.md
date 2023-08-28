@@ -21,8 +21,16 @@ This project is using:
 - [kryonet](https://github.com/EsotericSoftware/kryonet)
 
 # Running
+## Development
 Running is done via gradle.
 Just execute the following command in the root directory of the project:
 ```
 ./gradlew run
+```
+
+## Usage
+First, download a game from [releases](https://github.com/ivatolm/monopoly/releases).
+Running a game is done via running the following command from the `game` directory:
+```
+java -jar desktop.jar
 ```
